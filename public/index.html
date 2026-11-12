@@ -1045,8 +1045,14 @@
     }
 
     function handleGoogleAuth() {
+      // First attempt native Google GSI prompt
       if (googleClientId && window.google?.accounts?.id) {
-        google.accounts.id.prompt();
+        google.accounts.id.prompt((notification) => {
+          if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
+            console.log('Google GSI One Tap prompt skipped or not displayed, showing Google sign-in modal:', notification.getNotDisplayedReason?.());
+            document.getElementById('googleAuthModalOverlay').style.display = 'flex';
+          }
+        });
       } else {
         document.getElementById('googleAuthModalOverlay').style.display = 'flex';
       }
