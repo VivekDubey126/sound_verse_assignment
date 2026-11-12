@@ -538,26 +538,26 @@
 
     <!-- SUCCESS POPUP / SECRET DIALOG -->
     <div id="secretModalOverlay"
-      style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.85); backdrop-filter:blur(6px); z-index:110; justify-content:center; align-items:center;">
+      style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.85); backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px); z-index:110; justify-content:center; align-items:center;">
       <div class="card"
-        style="width:100%; max-width:520px; border:1px solid var(--warning); box-shadow:0 25px 50px -12px rgba(245,158,11,0.25);">
-        <h2 style="color:var(--warning); display:flex; align-items:center; gap:0.5rem;">
+        style="width:100%; max-width:540px; background: linear-gradient(135deg, rgba(255, 255, 255, 0.09) 0%, rgba(255, 255, 255, 0.02) 100%), rgba(14, 12, 20, 0.75); backdrop-filter: blur(36px); -webkit-backdrop-filter: blur(36px); border: 1px solid rgba(245, 158, 11, 0.35); border-top: 1px solid rgba(255, 255, 255, 0.3); border-radius: 26px; box-shadow: 0 30px 80px -15px rgba(0, 0, 0, 0.9), 0 0 45px -5px rgba(245, 158, 11, 0.25); padding: 2.25rem;">
+        <h2 style="color:var(--warning); display:flex; align-items:center; gap:0.6rem; font-family:'Bricolage Grotesque', sans-serif; font-size:1.35rem; margin-bottom:0.75rem;">
           <span>🔒</span> Save Your Secret API Key
         </h2>
-        <p style="font-size:0.85rem; color:#fde68a; margin:0.5rem 0 1rem 0; line-height:1.4;">
+        <p style="font-size:0.88rem; color:#fde68a; margin:0 0 1.25rem 0; line-height:1.5;">
           <strong>Important:</strong> This secret will <u>only be displayed once</u>. We store only an irreversible
           SHA-256 hash. If lost, you must rotate or generate a new key.
         </p>
 
         <div class="secret-box" id="modalSecretDisplay"
-          style="margin:0 0 1rem 0; padding:1rem; font-size:0.95rem; user-select:all;">
+          style="margin:0 0 1.5rem 0; padding:1.15rem; font-size:0.95rem; user-select:all; border-radius:14px; background:rgba(0, 0, 0, 0.55); border:1px dashed rgba(245, 158, 11, 0.6); box-shadow:inset 0 2px 8px rgba(0,0,0,0.6);">
         </div>
 
-        <div style="display:flex; justify-content:space-between; align-items:center;">
-          <button class="btn" id="copyKeyBtn" onclick="copySecretToClipboard()" style="background:#2563eb;">
+        <div style="display:flex; justify-content:space-between; align-items:center; gap:1rem;">
+          <button class="btn btn-cta" id="copyKeyBtn" onclick="copySecretToClipboard()" style="flex:1;">
             📋 Copy to Clipboard
           </button>
-          <button class="btn btn-secondary" onclick="closeSecretModal()">Done</button>
+          <button class="btn btn-secondary" onclick="closeSecretModal()" style="min-width:110px;">Done</button>
         </div>
       </div>
     </div>
