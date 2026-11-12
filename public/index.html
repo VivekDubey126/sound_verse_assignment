@@ -1,37 +1,47 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Soundverse AI — Enterprise Developer Platform</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Bricolage+Grotesque:opsz,wght@12..96,600;700;800&family=JetBrains+Mono:wght@400;500&display=swap">
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Manrope:wght@400;500;600;700;800&family=Bricolage+Grotesque:opsz,wght@12..96,600;700;800&family=JetBrains+Mono:wght@400;500&display=swap">
   <script src="https://accounts.google.com/gsi/client" async defer></script>
   <style>
     :root {
       --bg: #07060c;
-      --card-bg: #0e0e13;
-      --card-border: #1f1f26;
+      --card-bg: rgba(18, 18, 24, 0.7);
+      --card-border: rgba(255, 255, 255, 0.08);
       --primary: #7c5cff;
       --primary-hover: #6a48f5;
       --accent: #ff7a2d;
       --accent-hover: #f9631f;
       --text: #f6f6f7;
-      --text-muted: #8a8a92;
+      --text-muted: #94949e;
       --success: #10b981;
       --danger: #ef4444;
       --warning: #f59e0b;
       --gradient-brand: linear-gradient(135deg, #7c5cff 0%, #ff7a2d 100%);
-      --gradient-cta: linear-gradient(135deg, #ff8a3d, #f9631f 55%, #ef4e2a);
+      --gradient-hero-title: linear-gradient(135deg, #ff8a3d 0%, #d946ef 50%, #818cf8 100%);
+      --gradient-cta: linear-gradient(135deg, #ffffff 0%, #f1f5f9 100%);
     }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
     body {
       font-family: 'Manrope', -apple-system, BlinkMacSystemFont, sans-serif;
-      background: var(--bg);
-      background-image: 
-        radial-gradient(circle at 15% 15%, rgba(124, 92, 255, 0.08) 0%, transparent 40%),
-        radial-gradient(circle at 85% 85%, rgba(255, 122, 45, 0.05) 0%, transparent 45%);
+      background: #07060c;
+      background-image:
+        radial-gradient(circle at 10% 20%, rgba(124, 92, 255, 0.16) 0%, transparent 45%),
+        radial-gradient(circle at 85% 15%, rgba(217, 70, 239, 0.12) 0%, transparent 40%),
+        radial-gradient(circle at 50% 80%, rgba(255, 122, 45, 0.08) 0%, transparent 50%);
       background-attachment: fixed;
       color: var(--text);
       min-height: 100vh;
@@ -39,237 +49,361 @@
       flex-direction: column;
       -webkit-font-smoothing: antialiased;
     }
+
     header {
-      background: rgba(14, 14, 19, 0.85);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
+      background: rgba(10, 10, 14, 0.7);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
       border-bottom: 1px solid var(--card-border);
-      padding: 0.85rem 1.75rem;
+      padding: 0.85rem 2rem;
       display: flex;
       justify-content: space-between;
       align-items: center;
       flex-wrap: wrap;
       gap: 1rem;
+      position: sticky;
+      top: 0;
+      z-index: 50;
     }
+
     .header-left {
       display: flex;
       align-items: center;
       gap: 1.25rem;
       flex-wrap: wrap;
     }
+
     .header-right {
       display: flex;
       align-items: center;
       gap: 0.75rem;
       flex-wrap: wrap;
     }
+
     .nav-btn {
       color: #a1a1aa;
       text-decoration: none;
-      font-size: 0.8rem;
+      font-size: 0.82rem;
       font-weight: 600;
       display: inline-flex;
       align-items: center;
       gap: 0.4rem;
-      padding: 0.4rem 0.75rem;
-      border-radius: 8px;
-      background: #14141a;
-      border: 1px solid #24242d;
+      padding: 0.4rem 0.85rem;
+      border-radius: 9999px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
       transition: all 0.2s ease;
       white-space: nowrap;
     }
+
     .nav-btn:hover {
       color: #fff;
-      background: #1f1f29;
-      border-color: #3b3b49;
+      background: rgba(255, 255, 255, 0.12);
+      border-color: rgba(255, 255, 255, 0.25);
     }
+
+    .logo-container {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      padding: 0.35rem 0.85rem;
+      border-radius: 9999px;
+      backdrop-filter: blur(8px);
+    }
+
     .logo {
       font-family: 'Bricolage Grotesque', 'Manrope', sans-serif;
-      font-size: 1.25rem;
-      font-weight: 800;
-      display: flex;
-      align-items: center;
-      gap: 0.45rem;
+      font-size: 1.05rem;
+      font-weight: 700;
       color: #fff;
       letter-spacing: -0.02em;
       white-space: nowrap;
     }
-    .logo span.logo-icon {
-      background: var(--gradient-brand);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      font-size: 1.35rem;
+
+    .logo-sunburst {
+      width: 20px;
+      height: 20px;
+      background: radial-gradient(circle at center, #ff8a3d, #7c5cff, #ec4899);
+      border-radius: 50%;
+      display: inline-block;
+      box-shadow: 0 0 10px rgba(124, 92, 255, 0.6);
     }
+
     .badge {
       font-family: 'Manrope', sans-serif;
       font-size: 0.72rem;
       background: rgba(124, 92, 255, 0.15);
       color: #c4b5fd;
-      border: 1px solid rgba(124, 92, 255, 0.35);
-      padding: 0.2rem 0.55rem;
+      border: 1px solid rgba(124, 92, 255, 0.3);
+      padding: 0.2rem 0.6rem;
       border-radius: 9999px;
       font-weight: 700;
-      letter-spacing: 0.02em;
     }
+
+    /* HERO SHOWCASE SECTION */
+    .hero-banner {
+      text-align: center;
+      padding: 3rem 1.5rem 2.5rem 1.5rem;
+      max-width: 860px;
+      margin: 0 auto;
+    }
+
+    .hero-h1 {
+      font-family: 'Instrument Serif', Georgia, serif;
+      font-size: clamp(2.5rem, 5.5vw, 4.2rem);
+      font-weight: 400;
+      line-height: 1.1;
+      letter-spacing: -0.01em;
+      color: #ffffff;
+      margin-bottom: 0.4rem;
+    }
+
+    .hero-agentic {
+      font-family: 'Instrument Serif', Georgia, serif;
+      font-style: italic;
+      font-size: clamp(2.5rem, 5.5vw, 4.2rem);
+      background: var(--gradient-hero-title);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: inline-block;
+    }
+
+    .hero-sub {
+      color: #94a3b8;
+      font-size: clamp(0.95rem, 1.8vw, 1.05rem);
+      line-height: 1.6;
+      max-width: 580px;
+      margin: 1rem auto 1.5rem auto;
+      font-weight: 400;
+    }
+
+    /* PILL BADGES ROW */
+    .pills-row {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0.6rem;
+      margin-top: 1.5rem;
+    }
+
+    .trust-pill {
+      font-size: 0.75rem;
+      color: #cbd5e1;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 0.35rem 0.85rem;
+      border-radius: 9999px;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      backdrop-filter: blur(8px);
+    }
+
     main {
       flex: 1;
-      padding: 2rem;
-      max-width: 1200px;
+      padding: 1.5rem 2rem 3rem 2rem;
+      max-width: 1240px;
       margin: 0 auto;
       width: 100%;
     }
+
     .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 1.5rem; }
     .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
     @media (max-width: 900px) {
       .grid-2 { grid-template-columns: 1fr; }
     }
+
     .table-container {
       width: 100%;
       overflow-x: auto;
       -webkit-overflow-scrolling: touch;
     }
+
     .card {
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      border-radius: 14px;
-      padding: 1.5rem;
-      box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.5);
+      background: rgba(14, 14, 20, 0.75);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.09);
+      border-radius: 18px;
+      padding: 1.75rem;
+      box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.6);
       overflow: hidden;
-      transition: border-color 0.2s ease;
+      transition: all 0.25s ease;
     }
+
     .card:hover {
-      border-color: #2b2b36;
+      border-color: rgba(255, 255, 255, 0.16);
+      box-shadow: 0 14px 40px -10px rgba(0, 0, 0, 0.75);
     }
+
     .card h2 {
       font-family: 'Bricolage Grotesque', 'Manrope', sans-serif;
       font-size: 1.15rem;
       font-weight: 700;
       letter-spacing: -0.01em;
-      margin-bottom: 1rem;
+      margin-bottom: 1.1rem;
       display: flex;
       align-items: center;
       justify-content: space-between;
       color: #fff;
     }
+
     .btn {
       background: var(--primary);
       color: #fff;
       border: none;
-      border-radius: 9px;
-      padding: 0.6rem 1.25rem;
+      border-radius: 9999px;
+      padding: 0.65rem 1.4rem;
       font-family: 'Manrope', sans-serif;
       font-weight: 600;
       cursor: pointer;
       font-size: 0.88rem;
-      transition: all 0.15s ease;
+      transition: all 0.2s ease;
       box-shadow: 0 4px 14px -3px rgba(124, 92, 255, 0.45);
     }
+
     .btn:hover {
       background: var(--primary-hover);
       transform: translateY(-1px);
-      box-shadow: 0 6px 18px -3px rgba(124, 92, 255, 0.6);
+      box-shadow: 0 6px 20px -3px rgba(124, 92, 255, 0.6);
     }
-    .btn:active {
-      transform: translateY(0);
+
+    .btn-soundverse-white {
+      background: #ffffff;
+      color: #0b0f19;
+      font-weight: 700;
+      border-radius: 9999px;
+      padding: 0.75rem 1.75rem;
+      box-shadow: 0 4px 20px rgba(255, 255, 255, 0.25);
     }
+
+    .btn-soundverse-white:hover {
+      background: #f1f5f9;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 25px rgba(255, 255, 255, 0.35);
+    }
+
     .btn-cta {
-      background: var(--gradient-cta);
-      box-shadow: 0 4px 14px -3px rgba(249, 99, 31, 0.55);
+      background: linear-gradient(135deg, #ff8a3d, #f9631f 55%, #ef4e2a);
+      color: #fff;
+      box-shadow: 0 6px 22px -4px rgba(249, 99, 31, 0.6);
+      border-radius: 9999px;
+      font-weight: 700;
     }
+
     .btn-cta:hover {
-      box-shadow: 0 6px 20px -4px rgba(249, 99, 31, 0.7);
+      box-shadow: 0 8px 28px -4px rgba(249, 99, 31, 0.75);
+      transform: translateY(-2px);
     }
+
     .btn-secondary {
-      background: #181820;
+      background: rgba(255, 255, 255, 0.06);
       color: #e4e4e7;
-      border: 1px solid #282834;
+      border: 1px solid rgba(255, 255, 255, 0.1);
       box-shadow: none;
+      border-radius: 9999px;
     }
+
     .btn-secondary:hover {
-      background: #23232e;
-      border-color: #383848;
+      background: rgba(255, 255, 255, 0.12);
+      border-color: rgba(255, 255, 255, 0.2);
       box-shadow: none;
     }
+
     .btn-danger {
       background: rgba(239, 68, 68, 0.15);
       color: #f87171;
       border: 1px solid rgba(239, 68, 68, 0.3);
       box-shadow: none;
+      border-radius: 9999px;
     }
+
     .btn-danger:hover {
       background: #ef4444;
       color: #fff;
     }
+
     input, select, textarea {
       width: 100%;
-      background: #121217;
-      border: 1px solid #24242d;
+      background: rgba(10, 10, 14, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.1);
       color: #f6f6f7;
-      padding: 0.65rem 0.85rem;
-      border-radius: 9px;
+      padding: 0.7rem 0.95rem;
+      border-radius: 12px;
       font-family: 'Manrope', sans-serif;
       font-size: 0.9rem;
-      margin-top: 0.25rem;
+      margin-top: 0.3rem;
       margin-bottom: 1rem;
       outline: none;
-      transition: border-color 0.2s;
+      transition: all 0.2s;
     }
+
     input:focus, select:focus, textarea:focus {
-      border-color: var(--primary);
-      box-shadow: 0 0 0 3px rgba(124, 92, 255, 0.2);
+      border-color: #7c5cff;
+      background: rgba(14, 14, 20, 0.95);
+      box-shadow: 0 0 0 3px rgba(124, 92, 255, 0.25);
     }
+
     label {
       font-size: 0.82rem;
       color: var(--text-muted);
       font-weight: 600;
       letter-spacing: 0.01em;
     }
+
     .secret-box {
-      background: #0d0c14;
+      background: rgba(255, 122, 45, 0.05);
       border: 1px dashed var(--accent);
-      border-radius: 10px;
-      padding: 1rem;
+      border-radius: 12px;
+      padding: 1.1rem;
       margin: 1rem 0;
       word-break: break-all;
       font-family: 'JetBrains Mono', monospace;
       font-size: 0.85rem;
       color: #fed7aa;
     }
+
     table { width: 100%; border-collapse: collapse; margin-top: 0.5rem; }
     th, td {
-      padding: 0.7rem 0.6rem;
+      padding: 0.75rem 0.7rem;
       text-align: left;
       font-size: 0.84rem;
-      border-bottom: 1px solid #1a1a22;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
     }
+
     th {
       color: var(--text-muted);
       font-weight: 600;
-      font-size: 0.78rem;
+      font-size: 0.76rem;
       text-transform: uppercase;
-      letter-spacing: 0.04em;
+      letter-spacing: 0.05em;
     }
+
     .progress-bar {
-      height: 7px;
-      background: #1a1a24;
+      height: 8px;
+      background: rgba(255, 255, 255, 0.06);
       border-radius: 9999px;
       overflow: hidden;
       margin: 0.5rem 0;
     }
+
     .progress-fill {
       height: 100%;
       background: var(--gradient-brand);
       width: 0%;
       transition: width 0.3s;
     }
+
     .mono { font-family: 'JetBrains Mono', monospace; font-size: 0.82rem; }
     .tag {
       font-size: 0.72rem;
-      padding: 0.2rem 0.5rem;
-      border-radius: 6px;
+      padding: 0.2rem 0.55rem;
+      border-radius: 9999px;
       font-weight: 700;
-      letter-spacing: 0.02em;
     }
+
     .tag-live { background: rgba(16, 185, 129, 0.15); color: #6ee7b7; border: 1px solid rgba(16, 185, 129, 0.3); }
     .tag-test { background: rgba(124, 92, 255, 0.15); color: #c4b5fd; border: 1px solid rgba(124, 92, 255, 0.3); }
     .tag-revoked { background: rgba(239, 68, 68, 0.15); color: #fca5a5; border: 1px solid rgba(239, 68, 68, 0.3); }
@@ -279,12 +413,15 @@
     .status-failed { color: var(--danger); font-weight: 600; }
   </style>
 </head>
+
 <body>
   <header>
     <div class="header-left">
-      <div class="logo">
-        <span class="logo-icon">⚡</span> Soundverse <span class="badge">Enterprise API</span>
+      <div class="logo-container">
+        <span class="logo-sunburst"></span>
+        <span class="logo">soundverse</span>
       </div>
+      <span class="badge">Enterprise API</span>
       <div style="display:flex; gap:0.5rem; align-items:center;">
         <a href="/docs" target="_blank" class="nav-btn">
           <span>📖</span> Swagger Docs
@@ -298,108 +435,156 @@
     <div class="header-right">
       <div id="workspaceContainer" style="display:none; align-items:center; gap:0.4rem;">
         <label style="font-size:0.75rem; color:var(--text-muted); margin:0;">Workspace:</label>
-        <select id="workspaceSelector" onchange="switchWorkspace(this.value)" style="margin:0; padding:0.35rem 0.5rem; background:#1e293b; border:1px solid #3b82f6; font-size:0.8rem; border-radius:6px; color:#fff; cursor:pointer; max-width:210px; text-overflow:ellipsis;">
+        <select id="workspaceSelector" onchange="switchWorkspace(this.value)"
+          style="margin:0; padding:0.35rem 0.65rem; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.15); font-size:0.8rem; border-radius:9999px; color:#fff; cursor:pointer; max-width:210px; text-overflow:ellipsis;">
         </select>
       </div>
       <span id="accountEmail" style="color: var(--text-muted); font-size: 0.85rem; font-weight: 500;">Not logged in</span>
-      <button class="btn btn-secondary" id="logoutBtn" style="display: none; padding: 0.35rem 0.75rem; font-size: 0.8rem;" onclick="logout()">Logout</button>
+      <button class="btn btn-secondary" id="logoutBtn"
+        style="display: none; padding: 0.35rem 0.85rem; font-size: 0.8rem;" onclick="logout()">Logout</button>
     </div>
   </header>
 
+  <!-- HERO SECTION FROM SOUNDVERSE.AI -->
+  <section class="hero-banner">
+    <h1 class="hero-h1">From Musical Idea to Audience.</h1>
+    <div class="hero-agentic">Your Agentic Studio</div>
+    <p class="hero-sub">
+      Generate full music tracks seamlessly with the Soundverse Enterprise API. Real-time inference, multi-tenant rights enforcement, and automated webhooks.
+    </p>
+
+    <!-- TRUST BADGES PILLS ROW -->
+    <div class="pills-row">
+      <span class="trust-pill">📺 As seen on <strong>Shark Tank</strong></span>
+      <span class="trust-pill">🏆 <strong>#1 AI Song in India</strong></span>
+      <span class="trust-pill">🏛️ <strong>Google for Startups</strong> Accelerator</span>
+      <span class="trust-pill">🎵 Live on <strong>Spotify & Meta</strong> ecosystem</span>
+    </div>
+  </section>
+
   <main>
-  <!-- MODAL POPUP FOR KEY CREATION -->
-  <div id="keyModalOverlay" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.75); backdrop-filter:blur(4px); z-index:100; justify-content:center; align-items:center;">
-    <div class="card" style="width:100%; max-width:480px; box-shadow:0 20px 25px -5px rgba(0,0,0,0.5); border:1px solid #374151; animation: popIn 0.2s ease-out;">
-      <h2 style="margin-bottom:0.5rem;">Generate API Key</h2>
-      <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:1rem;">API keys authenticate your server requests against Soundverse models.</p>
-      
-      <label>Key Name (Optional)</label>
-      <input type="text" id="modalKeyName" placeholder="e.g. Production Backend, Test Client">
+    <!-- MODAL POPUP FOR KEY CREATION -->
+    <div id="keyModalOverlay"
+      style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.75); backdrop-filter:blur(4px); z-index:100; justify-content:center; align-items:center;">
+      <div class="card"
+        style="width:100%; max-width:480px; box-shadow:0 20px 25px -5px rgba(0,0,0,0.5); border:1px solid #374151; animation: popIn 0.2s ease-out;">
+        <h2 style="margin-bottom:0.5rem;">Generate API Key</h2>
+        <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:1rem;">API keys authenticate your server
+          requests against Soundverse models.</p>
 
-      <label>Environment Mode</label>
-      <select id="modalKeyMode">
-        <option value="live">Live (Calls models, consumes plan allowance)</option>
-        <option value="test">Test (Free mock models, 0 credits billed)</option>
-      </select>
+        <label>Key Name (Optional)</label>
+        <input type="text" id="modalKeyName" placeholder="e.g. Production Backend, Test Client">
 
-      <div style="margin-top:0.5rem; margin-bottom:1rem;">
-        <label>Scopes</label>
-        <div style="font-size:0.85rem; color:#d1d5db; display:flex; flex-direction:column; gap:0.4rem; margin-top:0.25rem;">
-          <label style="cursor:pointer;"><input type="checkbox" id="scopeWrite" checked> <strong style="color:#fff;">generations:write</strong> — Create and cancel jobs</label>
-          <label style="cursor:pointer;"><input type="checkbox" id="scopeRead" checked> <strong style="color:#fff;">generations:read</strong> — Read job status and usage</label>
+        <label>Environment Mode</label>
+        <select id="modalKeyMode">
+          <option value="live">Live (Calls models, consumes plan allowance)</option>
+          <option value="test">Test (Free mock models, 0 credits billed)</option>
+        </select>
+
+        <div style="margin-top:0.5rem; margin-bottom:1rem;">
+          <label>Scopes</label>
+          <div
+            style="font-size:0.85rem; color:#d1d5db; display:flex; flex-direction:column; gap:0.4rem; margin-top:0.25rem;">
+            <label style="cursor:pointer;"><input type="checkbox" id="scopeWrite" checked> <strong
+                style="color:#fff;">generations:write</strong> — Create and cancel jobs</label>
+            <label style="cursor:pointer;"><input type="checkbox" id="scopeRead" checked> <strong
+                style="color:#fff;">generations:read</strong> — Read job status and usage</label>
+          </div>
+        </div>
+
+        <div style="display:flex; justify-content:flex-end; gap:0.5rem;">
+          <button class="btn btn-secondary" onclick="closeKeyModal()">Cancel</button>
+          <button class="btn" onclick="submitCreateKey()">Create Key</button>
         </div>
       </div>
+    </div>
 
-      <div style="display:flex; justify-content:flex-end; gap:0.5rem;">
-        <button class="btn btn-secondary" onclick="closeKeyModal()">Cancel</button>
-        <button class="btn" onclick="submitCreateKey()">Create Key</button>
+    <!-- SUCCESS POPUP / SECRET DIALOG -->
+    <div id="secretModalOverlay"
+      style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.85); backdrop-filter:blur(6px); z-index:110; justify-content:center; align-items:center;">
+      <div class="card"
+        style="width:100%; max-width:520px; border:1px solid var(--warning); box-shadow:0 25px 50px -12px rgba(245,158,11,0.25);">
+        <h2 style="color:var(--warning); display:flex; align-items:center; gap:0.5rem;">
+          <span>🔒</span> Save Your Secret API Key
+        </h2>
+        <p style="font-size:0.85rem; color:#fde68a; margin:0.5rem 0 1rem 0; line-height:1.4;">
+          <strong>Important:</strong> This secret will <u>only be displayed once</u>. We store only an irreversible
+          SHA-256 hash. If lost, you must rotate or generate a new key.
+        </p>
+
+        <div class="secret-box" id="modalSecretDisplay"
+          style="margin:0 0 1rem 0; padding:1rem; font-size:0.95rem; user-select:all;">
+        </div>
+
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <button class="btn" id="copyKeyBtn" onclick="copySecretToClipboard()" style="background:#2563eb;">
+            📋 Copy to Clipboard
+          </button>
+          <button class="btn btn-secondary" onclick="closeSecretModal()">Done</button>
+        </div>
       </div>
     </div>
-  </div>
 
-  <!-- SUCCESS POPUP / SECRET DIALOG -->
-  <div id="secretModalOverlay" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.85); backdrop-filter:blur(6px); z-index:110; justify-content:center; align-items:center;">
-    <div class="card" style="width:100%; max-width:520px; border:1px solid var(--warning); box-shadow:0 25px 50px -12px rgba(245,158,11,0.25);">
-      <h2 style="color:var(--warning); display:flex; align-items:center; gap:0.5rem;">
-        <span>🔒</span> Save Your Secret API Key
-      </h2>
-      <p style="font-size:0.85rem; color:#fde68a; margin:0.5rem 0 1rem 0; line-height:1.4;">
-        <strong>Important:</strong> This secret will <u>only be displayed once</u>. We store only an irreversible SHA-256 hash. If lost, you must rotate or generate a new key.
-      </p>
+    <!-- GOOGLE AUTH POPUP / DIALOG -->
+    <div id="googleAuthModalOverlay"
+      style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.85); backdrop-filter:blur(6px); z-index:115; justify-content:center; align-items:center;">
+      <div class="card"
+        style="width:100%; max-width:440px; border:1px solid #3b82f6; box-shadow:0 25px 50px -12px rgba(59,130,246,0.3);">
+        <h2 style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.75rem;">
+          <svg width="20" height="20" viewBox="0 0 18 18">
+            <path fill="#4285F4"
+              d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.874 2.684-6.616z" />
+            <path fill="#34A853"
+              d="M9 18c2.43 0 4.467-.806 5.956-2.184l-2.908-2.258c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z" />
+            <path fill="#FBBC05"
+              d="M3.964 10.707c-.18-.54-.282-1.117-.282-1.707s.102-1.167.282-1.707V4.961H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.039l3.007-2.332z" />
+            <path fill="#EA4335"
+              d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.961L3.964 7.293C4.672 5.166 6.656 3.58 9 3.58z" />
+          </svg>
+          Sign in with Google
+        </h2>
+        <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:1rem; line-height:1.4;">
+          Sign in securely using your Google account. Connects your developer identity directly.
+        </p>
 
-      <div class="secret-box" id="modalSecretDisplay" style="margin:0 0 1rem 0; padding:1rem; font-size:0.95rem; user-select:all;">
-      </div>
+        <label>Google Account Email</label>
+        <input type="email" id="googleDevEmail" placeholder="developer@gmail.com" value="google.developer@gmail.com">
 
-      <div style="display:flex; justify-content:space-between; align-items:center;">
-        <button class="btn" id="copyKeyBtn" onclick="copySecretToClipboard()" style="background:#2563eb;">
-          📋 Copy to Clipboard
-        </button>
-        <button class="btn btn-secondary" onclick="closeSecretModal()">Done</button>
-      </div>
-    </div>
-  </div>
+        <label>Display Name (optional)</label>
+        <input type="text" id="googleDevName" placeholder="Developer Name" value="Google Developer">
 
-  <!-- GOOGLE AUTH POPUP / DIALOG -->
-  <div id="googleAuthModalOverlay" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.85); backdrop-filter:blur(6px); z-index:115; justify-content:center; align-items:center;">
-    <div class="card" style="width:100%; max-width:440px; border:1px solid #3b82f6; box-shadow:0 25px 50px -12px rgba(59,130,246,0.3);">
-      <h2 style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.75rem;">
-        <svg width="20" height="20" viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.874 2.684-6.616z"/><path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.184l-2.908-2.258c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z"/><path fill="#FBBC05" d="M3.964 10.707c-.18-.54-.282-1.117-.282-1.707s.102-1.167.282-1.707V4.961H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.039l3.007-2.332z"/><path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.961L3.964 7.293C4.672 5.166 6.656 3.58 9 3.58z"/></svg>
-        Sign in with Google
-      </h2>
-      <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:1rem; line-height:1.4;">
-        Sign in securely using your Google account. Connects your developer identity directly.
-      </p>
-      
-      <label>Google Account Email</label>
-      <input type="email" id="googleDevEmail" placeholder="developer@gmail.com" value="google.developer@gmail.com">
-
-      <label>Display Name (optional)</label>
-      <input type="text" id="googleDevName" placeholder="Developer Name" value="Google Developer">
-
-      <div style="display:flex; justify-content:flex-end; gap:0.5rem; margin-top:0.5rem;">
-        <button class="btn btn-secondary" onclick="closeGoogleModal()">Cancel</button>
-        <button class="btn" style="background:#2563eb;" onclick="submitGoogleDevAuth()">Sign In</button>
+        <div style="display:flex; justify-content:flex-end; gap:0.5rem; margin-top:0.5rem;">
+          <button class="btn btn-secondary" onclick="closeGoogleModal()">Cancel</button>
+          <button class="btn" style="background:#2563eb;" onclick="submitGoogleDevAuth()">Sign In</button>
+        </div>
       </div>
     </div>
-  </div>
 
-  <!-- TOAST NOTIFICATION -->
-  <div id="toastNotification" style="display:none; position:fixed; bottom:24px; right:24px; background:#1e293b; border:1px solid #334155; padding:1rem 1.25rem; border-radius:10px; box-shadow:0 10px 15px -3px rgba(0,0,0,0.5); z-index:200; max-width:380px;">
-    <div style="display:flex; align-items:center; gap:0.75rem;">
-      <span id="toastIcon" style="font-size:1.25rem;">⚡</span>
-      <div>
-        <div id="toastTitle" style="font-weight:600; font-size:0.9rem; color:#fff;"></div>
-        <div id="toastMsg" style="font-size:0.8rem; color:var(--text-muted); margin-top:2px;"></div>
+    <!-- TOAST NOTIFICATION -->
+    <div id="toastNotification"
+      style="display:none; position:fixed; bottom:24px; right:24px; background:#1e293b; border:1px solid #334155; padding:1rem 1.25rem; border-radius:10px; box-shadow:0 10px 15px -3px rgba(0,0,0,0.5); z-index:200; max-width:380px;">
+      <div style="display:flex; align-items:center; gap:0.75rem;">
+        <span id="toastIcon" style="font-size:1.25rem;">⚡</span>
+        <div>
+          <div id="toastTitle" style="font-weight:600; font-size:0.9rem; color:#fff;"></div>
+          <div id="toastMsg" style="font-size:0.8rem; color:var(--text-muted); margin-top:2px;"></div>
+        </div>
       </div>
     </div>
-  </div>
 
-  <style>
-    @keyframes popIn {
-      from { transform: scale(0.95); opacity: 0; }
-      to { transform: scale(1); opacity: 1; }
-    }
-  </style>
+    <style>
+      @keyframes popIn {
+        from {
+          transform: scale(0.95);
+          opacity: 0;
+        }
+
+        to {
+          transform: scale(1);
+          opacity: 1;
+        }
+      }
+    </style>
     <div id="authSection" class="card" style="max-width: 480px; margin: 2rem auto;">
       <h2 id="authTitle" style="margin-bottom: 1.25rem;">Developer Sign Up / Login</h2>
 
@@ -407,12 +592,17 @@
       <div id="g_id_signin_container" style="display: none; justify-content: center; margin-bottom: 0.75rem;"></div>
 
       <!-- GOOGLE SIGN IN BUTTON (ALWAYS CLICKABLE) -->
-      <button id="customGoogleBtn" type="button" onclick="handleGoogleAuth()" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px; background: #ffffff; color: #1f2937; border: 1px solid #d1d5db; border-radius: 8px; padding: 0.7rem 1rem; font-weight: 600; font-size: 0.95rem; cursor: pointer; transition: all 0.15s; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+      <button id="customGoogleBtn" type="button" onclick="handleGoogleAuth()"
+        style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px; background: #ffffff; color: #1f2937; border: 1px solid #d1d5db; border-radius: 8px; padding: 0.7rem 1rem; font-weight: 600; font-size: 0.95rem; cursor: pointer; transition: all 0.15s; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
         <svg width="18" height="18" viewBox="0 0 18 18">
-          <path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.874 2.684-6.616z"/>
-          <path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.184l-2.908-2.258c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z"/>
-          <path fill="#FBBC05" d="M3.964 10.707c-.18-.54-.282-1.117-.282-1.707s.102-1.167.282-1.707V4.961H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.039l3.007-2.332z"/>
-          <path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.961L3.964 7.293C4.672 5.166 6.656 3.58 9 3.58z"/>
+          <path fill="#4285F4"
+            d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.874 2.684-6.616z" />
+          <path fill="#34A853"
+            d="M9 18c2.43 0 4.467-.806 5.956-2.184l-2.908-2.258c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z" />
+          <path fill="#FBBC05"
+            d="M3.964 10.707c-.18-.54-.282-1.117-.282-1.707s.102-1.167.282-1.707V4.961H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.039l3.007-2.332z" />
+          <path fill="#EA4335"
+            d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.961L3.964 7.293C4.672 5.166 6.656 3.58 9 3.58z" />
         </svg>
         <span>Continue with Google</span>
       </button>
@@ -420,7 +610,8 @@
       <!-- OR DIVIDER -->
       <div style="display: flex; align-items: center; margin: 1.25rem 0; color: var(--text-muted); font-size: 0.78rem;">
         <div style="flex: 1; height: 1px; background: #374151;"></div>
-        <span style="padding: 0 0.75rem; text-transform: uppercase; letter-spacing: 0.05em;">or continue with email</span>
+        <span style="padding: 0 0.75rem; text-transform: uppercase; letter-spacing: 0.05em;">or continue with
+          email</span>
         <div style="flex: 1; height: 1px; background: #374151;"></div>
       </div>
 
@@ -428,7 +619,7 @@
       <input type="email" id="authEmail" placeholder="developer@company.com" value="demo@soundverse.ai">
       <label>Password</label>
       <input type="password" id="authPassword" placeholder="••••••••••••" value="Enterprise2026!">
-      
+
       <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem;">
         <button class="btn" style="flex: 1;" onclick="handleSignup()">Sign Up</button>
         <button class="btn btn-secondary" style="flex: 1;" onclick="handleLogin()">Log In</button>
@@ -468,7 +659,8 @@
           <div class="progress-bar">
             <div id="progressFill" class="progress-fill"></div>
           </div>
-          <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.5rem; display:flex; justify-content:space-between;">
+          <div
+            style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.5rem; display:flex; justify-content:space-between;">
             <span>Remaining: <strong id="creditsRemaining" style="color: var(--success);">200</strong> credits</span>
             <span id="beyondAllowanceBadge" class="badge" style="background:#374151;">Hard Stop</span>
           </div>
@@ -478,8 +670,10 @@
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem;">
               <span style="font-size:0.8rem; font-weight:600; color:#fff;">Usage Breakdown</span>
               <div style="display:flex; gap:0.25rem;">
-                <button class="btn btn-secondary" id="tabKeyBtn" style="padding:0.15rem 0.5rem; font-size:0.75rem;" onclick="switchUsageTab('key')">Per Key</button>
-                <button class="btn btn-secondary" id="tabDayBtn" style="padding:0.15rem 0.5rem; font-size:0.75rem;" onclick="switchUsageTab('day')">Per Day</button>
+                <button class="btn btn-secondary" id="tabKeyBtn" style="padding:0.15rem 0.5rem; font-size:0.75rem;"
+                  onclick="switchUsageTab('key')">Per Key</button>
+                <button class="btn btn-secondary" id="tabDayBtn" style="padding:0.15rem 0.5rem; font-size:0.75rem;"
+                  onclick="switchUsageTab('day')">Per Day</button>
               </div>
             </div>
 
@@ -487,10 +681,16 @@
             <div id="usageByKeyView" style="max-height:110px; overflow-y:auto;">
               <table style="font-size:0.75rem;">
                 <thead>
-                  <tr><th>Key Prefix</th><th>Mode</th><th style="text-align:right;">Credits</th></tr>
+                  <tr>
+                    <th>Key Prefix</th>
+                    <th>Mode</th>
+                    <th style="text-align:right;">Credits</th>
+                  </tr>
                 </thead>
                 <tbody id="usageByKeyTbody">
-                  <tr><td colspan="3" style="color:var(--text-muted);">No key usage yet.</td></tr>
+                  <tr>
+                    <td colspan="3" style="color:var(--text-muted);">No key usage yet.</td>
+                  </tr>
                 </tbody>
               </table>
             </div>
@@ -499,10 +699,15 @@
             <div id="usageByDayView" style="display:none; max-height:110px; overflow-y:auto;">
               <table style="font-size:0.75rem;">
                 <thead>
-                  <tr><th>Date</th><th style="text-align:right;">Credits Used</th></tr>
+                  <tr>
+                    <th>Date</th>
+                    <th style="text-align:right;">Credits Used</th>
+                  </tr>
                 </thead>
                 <tbody id="usageByDayTbody">
-                  <tr><td colspan="2" style="color:var(--text-muted);">No daily usage yet.</td></tr>
+                  <tr>
+                    <td colspan="2" style="color:var(--text-muted);">No daily usage yet.</td>
+                  </tr>
                 </tbody>
               </table>
             </div>
@@ -525,22 +730,24 @@
           </div>
 
           <div style="overflow-x: auto;">
-          <table>
-            <thead>
-              <tr>
-                <th>Key Prefix</th>
-                <th>Mode</th>
-                <th>Scopes</th>
-                <th>Created</th>
-                <th>Last Used</th>
-                <th>Status</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody id="keysTableBody">
-              <tr><td colspan="7" style="color: var(--text-muted);">No keys found.</td></tr>
-            </tbody>
-          </table>
+            <table>
+              <thead>
+                <tr>
+                  <th>Key Prefix</th>
+                  <th>Mode</th>
+                  <th>Scopes</th>
+                  <th>Created</th>
+                  <th>Last Used</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="keysTableBody">
+                <tr>
+                  <td colspan="7" style="color: var(--text-muted);">No keys found.</td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </div>
 
@@ -568,7 +775,8 @@
             </div>
           </div>
 
-          <button id="generateMusicBtn" class="btn btn-cta" style="width: 100%; margin-top: 0.25rem;" onclick="submitGeneration()">⚡ Trigger Generation (POST /v1/generations)</button>
+          <button id="generateMusicBtn" class="btn btn-cta" style="width: 100%; margin-top: 0.25rem;"
+            onclick="submitGeneration()">⚡ Trigger Generation (POST /v1/generations)</button>
 
           <div id="genStatusAlert" style="margin-top: 1rem; font-size: 0.85rem; display: none;"></div>
         </div>
@@ -593,7 +801,10 @@
               </tr>
             </thead>
             <tbody id="gensTableBody">
-              <tr><td colspan="6" style="color: var(--text-muted); text-align:center; padding:1.5rem;">No generation jobs yet. Trigger one above!</td></tr>
+              <tr>
+                <td colspan="6" style="color: var(--text-muted); text-align:center; padding:1.5rem;">No generation jobs
+                  yet. Trigger one above!</td>
+              </tr>
             </tbody>
           </table>
         </div>
@@ -613,7 +824,9 @@
                 </tr>
               </thead>
               <tbody id="auditTableBody">
-                <tr><td colspan="3" style="color: var(--text-muted);">No audit entries yet.</td></tr>
+                <tr>
+                  <td colspan="3" style="color: var(--text-muted);">No audit entries yet.</td>
+                </tr>
               </tbody>
             </table>
           </div>
@@ -623,9 +836,11 @@
         <div class="card">
           <h2>
             <span>Team Members</span>
-            <button id="addMemberBtn" class="btn" style="padding:0.3rem 0.6rem; font-size:0.75rem;" onclick="openAddMemberModal()">+ Add Member</button>
+            <button id="addMemberBtn" class="btn" style="padding:0.3rem 0.6rem; font-size:0.75rem;"
+              onclick="openAddMemberModal()">+ Add Member</button>
           </h2>
-          <div id="teamRoleNotice" style="display:none; font-size:0.75rem; color:var(--text-muted); margin-bottom:0.5rem;">
+          <div id="teamRoleNotice"
+            style="display:none; font-size:0.75rem; color:var(--text-muted); margin-bottom:0.5rem;">
             🔒 Only account owners can invite new team members.
           </div>
           <div class="table-container" style="max-height:260px; overflow-y:auto;">
@@ -638,7 +853,9 @@
                 </tr>
               </thead>
               <tbody id="teamTableBody">
-                <tr><td colspan="3" style="color: var(--text-muted);">Loading team...</td></tr>
+                <tr>
+                  <td colspan="3" style="color: var(--text-muted);">Loading team...</td>
+                </tr>
               </tbody>
             </table>
           </div>
@@ -646,18 +863,22 @@
       </div>
 
       <!-- BOTTOM ROW: DEVELOPER DOCUMENTATION & QUICKSTART CARD -->
-      <div class="card" style="margin-top: 1.5rem; border: 1px solid rgba(124, 92, 255, 0.3); background: linear-gradient(180deg, #101017 0%, #0a0a0f 100%);">
-        <h2>
-          <span>📚 Developer API Resources & Quickstart</span>
-          <div style="display:flex; gap:0.5rem;">
-            <a href="/openapi.yaml" download="openapi.yaml" class="btn btn-secondary" style="font-size:0.75rem; padding:0.35rem 0.7rem;">Download openapi.yaml</a>
-            <a href="/docs" target="_blank" class="btn" style="font-size:0.75rem; padding:0.35rem 0.7rem;">Open Interactive API Docs ↗</a>
-          </div>
-        </h2>
-        <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:1rem; line-height:1.5;">
-          Get your first AI-generated track in under five minutes. Use your generated API key (Live or Test) in the <code>Authorization: Bearer &lt;key&gt;</code> header.
-        </p>
-        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap:1rem;">
+        <div class="card"
+          style="margin-top: 1.5rem; border: 1px solid rgba(124, 92, 255, 0.3); background: linear-gradient(180deg, #101017 0%, #0a0a0f 100%);">
+          <h2>
+            <span>📚 Developer API Resources & Quickstart</span>
+            <div style="display:flex; gap:0.5rem;">
+              <a href="/openapi.yaml" download="openapi.yaml" class="btn btn-secondary"
+                style="font-size:0.75rem; padding:0.35rem 0.7rem;">Download openapi.yaml</a>
+              <a href="/docs" target="_blank" class="btn" style="font-size:0.75rem; padding:0.35rem 0.7rem;">Open
+                Interactive API Docs ↗</a>
+            </div>
+          </h2>
+          <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:1rem; line-height:1.5;">
+            Get your first AI-generated track in under five minutes. Use your generated API key (Live or Test) in the
+            <code>Authorization: Bearer &lt;key&gt;</code> header.
+          </p>
+          <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap:1rem;">
           <div style="background:#07060c; padding:1rem; border-radius:10px; border:1px solid #1f1f26;">
             <div style="color:#c4b5fd; font-size:0.82rem; font-weight:700; margin-bottom:0.4rem;">1. Generate Music Track (cURL)</div>
             <pre style="color:#e4e4e7; font-family:'JetBrains Mono',monospace; font-size:0.75rem; overflow-x:auto; margin:0; line-height:1.45;"><code>curl -X POST http://localhost:3000/v1/generations \
@@ -669,7 +890,7 @@
     "duration_sec": 30,
     "license": "royalty_free"
   }'</code></pre>
-          </div>
+            </div>
           <div style="background:#07060c; padding:1rem; border-radius:10px; border:1px solid #1f1f26;">
             <div style="color:#fed7aa; font-size:0.82rem; font-weight:700; margin-bottom:0.4rem;">2. Poll Status & Fetch Audio URL</div>
             <pre style="color:#e4e4e7; font-family:'JetBrains Mono',monospace; font-size:0.75rem; overflow-x:auto; margin:0; line-height:1.45;"><code>curl http://localhost:3000/v1/generations/gen_xyz123 \
@@ -683,19 +904,21 @@
 #     "duration_sec": 30
 #   }
 # }</code></pre>
+            </div>
           </div>
         </div>
       </div>
-    </div>
   </main>
 
   <!-- ADD TEAM MEMBER MODAL -->
-  <div id="teamModalOverlay" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.75); backdrop-filter:blur(4px); z-index:100; justify-content:center; align-items:center;">
-    <div class="card" style="width:100%; max-width:440px; box-shadow:0 20px 25px -5px rgba(0,0,0,0.5); border:1px solid #374151;">
+  <div id="teamModalOverlay"
+    style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.75); backdrop-filter:blur(4px); z-index:100; justify-content:center; align-items:center;">
+    <div class="card"
+      style="width:100%; max-width:440px; box-shadow:0 20px 25px -5px rgba(0,0,0,0.5); border:1px solid #374151;">
       <h2>Add Team Member</h2>
       <label>Email Address</label>
       <input type="email" id="teamMemberEmail" placeholder="colleague@company.com">
-      
+
       <label>Role</label>
       <select id="teamMemberRole">
         <option value="developer">Developer (Can create keys & trigger jobs)</option>
@@ -1061,7 +1284,7 @@
             </td>
           </tr>
         `).join('');
-      } catch (e) {}
+      } catch (e) { }
     }
 
     function openAddMemberModal() {
@@ -1137,7 +1360,7 @@
             <td class="mono"><strong>${k.key_prefix}...</strong></td>
             <td><span class="tag tag-${k.mode}">${k.mode.toUpperCase()}</span></td>
             <td>${scopesBadges || '<span style="color:var(--text-muted)">none</span>'}</td>
-            <td style="color:var(--text-muted); font-size:0.8rem;">${new Date(k.created_at).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</td>
+            <td style="color:var(--text-muted); font-size:0.8rem;">${new Date(k.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</td>
             <td style="font-size:0.8rem;">${formatRelativeTime(k.last_used_at)}</td>
             <td>${k.is_revoked ? '<span class="tag tag-revoked">REVOKED</span>' : '<span style="color:var(--success);font-weight:600;">Active</span>'}</td>
             <td>
@@ -1188,7 +1411,7 @@
       const scopes = [];
       if (document.getElementById('scopeWrite').checked) scopes.push('generations:write');
       if (document.getElementById('scopeRead').checked) scopes.push('generations:read');
-      
+
       closeKeyModal();
 
       try {
@@ -1337,10 +1560,10 @@
                 </div>
               ` : (g.status === 'failed' ? '<span style="color:var(--danger); font-size:0.8rem;">Generation failed</span>' : '<span style="color:var(--warning); font-size:0.8rem;">Rendering audio...</span>')}
             </td>
-            <td style="color:var(--text-muted); font-size:0.75rem;">${new Date(g.created_at).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit', second:'2-digit'})}</td>
+            <td style="color:var(--text-muted); font-size:0.75rem;">${new Date(g.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}</td>
           </tr>
         `).join('');
-      } catch (e) {}
+      } catch (e) { }
     }
 
     async function loadAudit() {
@@ -1378,5 +1601,5 @@
     if (token) loadDashboard();
   </script>
 </body>
-</html>
 
+</html>
