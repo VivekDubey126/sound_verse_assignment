@@ -462,8 +462,8 @@
     </div>
   </header>
 
-  <!-- HERO SECTION FROM SOUNDVERSE.AI -->
-  <section class="hero-banner">
+      <!-- HERO SECTION FROM SOUNDVERSE.AI -->
+  <section id="heroSection" class="hero-banner">
     <h1 class="hero-h1">From Musical Idea to Audience.</h1>
     <div class="hero-agentic">Your Agentic Studio</div>
     <p class="hero-sub">
@@ -1090,17 +1090,22 @@
     async function handleGoogleCredentialResponse(response) {
       const alert = document.getElementById('authAlert');
       try {
+        console.log('[Google Auth] Credential received from Google. Authenticating with server...');
         const res = await req('/auth/google', {
           method: 'POST',
           body: JSON.stringify({ credential: response.credential }),
         });
         token = res.token;
         localStorage.setItem('soundverse_token', token);
+        console.log('[Google Auth] Successfully received session token. Loading dashboard...');
         await loadDashboard();
       } catch (e) {
-        alert.style.display = 'block';
-        alert.style.color = 'var(--danger)';
-        alert.innerText = e.message;
+        console.error('[Google Auth Error]:', e);
+        if (alert) {
+          alert.style.display = 'block';
+          alert.style.color = 'var(--danger)';
+          alert.innerText = e.message;
+        }
       }
     }
 
@@ -1213,6 +1218,10 @@
       try {
         const me = await req('/dashboard/me');
         currentAccount = me.account;
+        
+        // Hide landing hero and auth card, reveal dashboard
+        const hero = document.getElementById('heroSection');
+        if (hero) hero.style.display = 'none';
         document.getElementById('authSection').style.display = 'none';
         document.getElementById('dashboardSection').style.display = 'block';
         document.getElementById('logoutBtn').style.display = 'block';
