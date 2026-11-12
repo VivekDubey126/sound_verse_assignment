@@ -452,10 +452,12 @@
       <span class="badge">Enterprise API</span>
       <div style="display:flex; gap:0.5rem; align-items:center;">
         <a href="/docs" target="_blank" class="nav-btn">
-          <span>📖</span> Swagger Docs
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="opacity:0.85;"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+          Swagger Docs
         </a>
         <a href="/quickstart" target="_blank" class="nav-btn">
-          <span>🚀</span> Quickstart
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="opacity:0.85;"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+          Quickstart
         </a>
       </div>
     </div>
@@ -492,10 +494,22 @@
 
     <!-- TRUST BADGES PILLS ROW -->
     <div class="pills-row">
-      <span class="trust-pill">📺 As seen on <strong>Shark Tank</strong></span>
-      <span class="trust-pill">🏆 <strong>#1 AI Song in India</strong></span>
-      <span class="trust-pill">🏛️ <strong>Google for Startups</strong> Accelerator</span>
-      <span class="trust-pill">🎵 Live on <strong>Spotify & Meta</strong> ecosystem</span>
+      <span class="trust-pill">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:#f59e0b;"><rect x="2" y="7" width="20" height="15" rx="2" ry="2"></rect><polyline points="17 2 12 7 7 2"></polyline></svg>
+        As seen on <strong>Shark Tank</strong>
+      </span>
+      <span class="trust-pill">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:#fbbf24;"><circle cx="12" cy="8" r="7"></circle><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline></svg>
+        <strong>#1 AI Song in India</strong>
+      </span>
+      <span class="trust-pill">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:#60a5fa;"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path></svg>
+        <strong>Google for Startups</strong> Accelerator
+      </span>
+      <span class="trust-pill">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:#34d399;"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg>
+        Live on <strong>Spotify & Meta</strong> ecosystem
+      </span>
     </div>
   </section>
 
@@ -542,7 +556,8 @@
       <div class="card"
         style="width:100%; max-width:540px; background: linear-gradient(135deg, rgba(255, 255, 255, 0.09) 0%, rgba(255, 255, 255, 0.02) 100%), rgba(14, 12, 20, 0.75); backdrop-filter: blur(36px); -webkit-backdrop-filter: blur(36px); border: 1px solid rgba(245, 158, 11, 0.35); border-top: 1px solid rgba(255, 255, 255, 0.3); border-radius: 26px; box-shadow: 0 30px 80px -15px rgba(0, 0, 0, 0.9), 0 0 45px -5px rgba(245, 158, 11, 0.25); padding: 2.25rem;">
         <h2 style="color:var(--warning); display:flex; align-items:center; gap:0.6rem; font-family:'Bricolage Grotesque', sans-serif; font-size:1.35rem; margin-bottom:0.75rem;">
-          <span>🔒</span> Save Your Secret API Key
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:#f59e0b;"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+          Save Your Secret API Key
         </h2>
         <p style="font-size:0.88rem; color:#fde68a; margin:0 0 1.25rem 0; line-height:1.5;">
           <strong>Important:</strong> This secret will <u>only be displayed once</u>. We store only an irreversible
@@ -555,7 +570,8 @@
 
         <div style="display:flex; justify-content:space-between; align-items:center; gap:1rem;">
           <button class="btn btn-cta" id="copyKeyBtn" onclick="copySecretToClipboard()" style="flex:1;">
-            📋 Copy to Clipboard
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:2px;"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+            <span>Copy to Clipboard</span>
           </button>
           <button class="btn btn-secondary" onclick="closeSecretModal()" style="min-width:110px;">Done</button>
         </div>
@@ -681,8 +697,9 @@
             </select>
             <button id="planUpdateBtn" class="btn btn-secondary" onclick="changePlan()">Update Plan</button>
           </div>
-          <div id="planRoleNotice" style="display:none; font-size:0.75rem; color:#f87171; margin-top:0.4rem;">
-            🔒 Only account owners can change billing plans.
+          <div id="planRoleNotice" style="display:none; font-size:0.75rem; color:#f87171; margin-top:0.4rem; align-items:center; gap:0.35rem;">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle;"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+            <span>Only account owners can change billing plans.</span>
           </div>
         </div>
 
@@ -812,7 +829,10 @@
           </div>
 
           <button id="generateMusicBtn" class="btn btn-cta" style="width: 100%; margin-top: 0.25rem;"
-            onclick="submitGeneration()">⚡ Trigger Generation (POST /v1/generations)</button>
+            onclick="submitGeneration()">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:2px;"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+            <span>Trigger Generation (POST /v1/generations)</span>
+          </button>
 
           <div id="genStatusAlert" style="margin-top: 1rem; font-size: 0.85rem; display: none;"></div>
         </div>
@@ -876,8 +896,9 @@
               onclick="openAddMemberModal()">+ Add Member</button>
           </h2>
           <div id="teamRoleNotice"
-            style="display:none; font-size:0.75rem; color:var(--text-muted); margin-bottom:0.5rem;">
-            🔒 Only account owners can invite new team members.
+            style="display:none; font-size:0.75rem; color:var(--text-muted); margin-bottom:0.5rem; align-items:center; gap:0.35rem;">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle;"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+            <span>Only account owners can invite new team members.</span>
           </div>
           <div class="table-container" style="max-height:260px; overflow-y:auto;">
             <table>
@@ -986,10 +1007,22 @@
       <div>
         <div style="font-size:0.8rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:#fff; margin-bottom:0.85rem;">Backed By & Seen On</div>
         <div style="display:flex; flex-direction:column; gap:0.5rem; font-size:0.8rem; color:#94a3b8;">
-          <div>📺 Featured on <strong>Shark Tank</strong></div>
-          <div>🏆 <strong>#1 AI Music App in India</strong></div>
-          <div>🏛️ <strong>Google for Startups</strong> Accelerator</div>
-          <div>🎧 Ex-Spotify & Meta Executives</div>
+          <div style="display:flex; align-items:center; gap:0.4rem;">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:#f59e0b;"><rect x="2" y="7" width="20" height="15" rx="2" ry="2"></rect><polyline points="17 2 12 7 7 2"></polyline></svg>
+            <span>Featured on <strong>Shark Tank</strong></span>
+          </div>
+          <div style="display:flex; align-items:center; gap:0.4rem;">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:#fbbf24;"><circle cx="12" cy="8" r="7"></circle><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline></svg>
+            <span><strong>#1 AI Music App in India</strong></span>
+          </div>
+          <div style="display:flex; align-items:center; gap:0.4rem;">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:#60a5fa;"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path></svg>
+            <span><strong>Google for Startups</strong> Accelerator</span>
+          </div>
+          <div style="display:flex; align-items:center; gap:0.4rem;">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:#a78bfa;"><path d="M3 18v-6a9 9 0 0 1 18 0v6"></path><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path></svg>
+            <span>Ex-Spotify & Meta Executives</span>
+          </div>
         </div>
       </div>
     </div>
@@ -1008,10 +1041,10 @@
 
   <!-- ADD TEAM MEMBER MODAL -->
   <div id="teamModalOverlay"
-    style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.75); backdrop-filter:blur(4px); z-index:100; justify-content:center; align-items:center;">
+    style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.85); backdrop-filter:blur(24px); -webkit-backdrop-filter:blur(24px); z-index:100; justify-content:center; align-items:center;">
     <div class="card"
-      style="width:100%; max-width:440px; box-shadow:0 20px 25px -5px rgba(0,0,0,0.5); border:1px solid #374151;">
-      <h2>Add Team Member</h2>
+      style="width:100%; max-width:460px; background: linear-gradient(135deg, rgba(255, 255, 255, 0.09) 0%, rgba(255, 255, 255, 0.02) 100%), rgba(14, 12, 20, 0.8); backdrop-filter: blur(36px); -webkit-backdrop-filter: blur(36px); border: 1px solid rgba(255, 255, 255, 0.16); border-top: 1px solid rgba(255, 255, 255, 0.32); border-left: 1px solid rgba(255, 255, 255, 0.24); border-radius: 26px; box-shadow: 0 30px 80px -15px rgba(0, 0, 0, 0.9), 0 0 50px -10px rgba(124, 92, 255, 0.25); padding: 2.25rem;">
+      <h2 style="font-family:'Bricolage Grotesque', sans-serif; font-size:1.35rem; margin-bottom:0.75rem;">Add Team Member</h2>
       <label>Email Address</label>
       <input type="email" id="teamMemberEmail" placeholder="colleague@company.com">
 
@@ -1022,9 +1055,9 @@
         <option value="owner">Owner (Full administrative permissions)</option>
       </select>
 
-      <div style="display:flex; justify-content:flex-end; gap:0.5rem; margin-top:1rem;">
+      <div style="display:flex; justify-content:flex-end; gap:0.75rem; margin-top:1.25rem;">
         <button class="btn btn-secondary" onclick="closeAddMemberModal()">Cancel</button>
-        <button class="btn" onclick="submitAddMember()">Add Member</button>
+        <button class="btn btn-cta" onclick="submitAddMember()">Add Member</button>
       </div>
     </div>
   </div>
