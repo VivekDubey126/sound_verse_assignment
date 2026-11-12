@@ -1306,12 +1306,23 @@
           genBtn.innerText = isViewer ? 'Generation Disabled for Viewers' : 'Trigger Generation (POST /v1/generations)';
         }
 
-        await Promise.all([loadKeys(), loadUsage(), loadGenerations(), loadAudit(), loadTeam()]);
+        try { await loadKeys(); } catch (err) { console.warn('Keys load error:', err); }
+        try { await loadUsage(); } catch (err) { console.warn('Usage load error:', err); }
+        try { await loadGenerations(); } catch (err) { console.warn('Generations load error:', err); }
+        try { await loadAudit(); } catch (err) { console.warn('Audit load error:', err); }
+        try { await loadTeam(); } catch (err) { console.warn('Team load error:', err); }
       } catch (e) {
+        console.error('[Dashboard Load Critical Error]:', e);
         token = '';
         localStorage.removeItem('soundverse_token');
         document.getElementById('authSection').style.display = 'block';
         document.getElementById('dashboardSection').style.display = 'none';
+        const alert = document.getElementById('authAlert');
+        if (alert) {
+          alert.style.display = 'block';
+          alert.style.color = 'var(--danger)';
+          alert.innerText = 'Session error: ' + (e.message || 'Could not load workspace');
+        }
       }
     }
 
