@@ -502,11 +502,11 @@
   <main>
     <!-- MODAL POPUP FOR KEY CREATION -->
     <div id="keyModalOverlay"
-      style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.75); backdrop-filter:blur(4px); z-index:100; justify-content:center; align-items:center;">
+      style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.85); backdrop-filter:blur(24px); -webkit-backdrop-filter:blur(24px); z-index:100; justify-content:center; align-items:center;">
       <div class="card"
-        style="width:100%; max-width:480px; box-shadow:0 20px 25px -5px rgba(0,0,0,0.5); border:1px solid #374151; animation: popIn 0.2s ease-out;">
-        <h2 style="margin-bottom:0.5rem;">Generate API Key</h2>
-        <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:1rem;">API keys authenticate your server
+        style="width:100%; max-width:480px; background: linear-gradient(135deg, rgba(255, 255, 255, 0.09) 0%, rgba(255, 255, 255, 0.02) 100%), rgba(14, 12, 20, 0.8); backdrop-filter: blur(36px); -webkit-backdrop-filter: blur(36px); border: 1px solid rgba(255, 255, 255, 0.16); border-top: 1px solid rgba(255, 255, 255, 0.32); border-left: 1px solid rgba(255, 255, 255, 0.24); border-radius: 26px; box-shadow: 0 30px 80px -15px rgba(0, 0, 0, 0.9), 0 0 50px -10px rgba(124, 92, 255, 0.25); padding: 2.25rem; animation: popIn 0.2s ease-out;">
+        <h2 style="margin-bottom:0.5rem; font-family:'Bricolage Grotesque', sans-serif; font-size:1.35rem;">Generate API Key</h2>
+        <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:1.25rem; line-height:1.45;">API keys authenticate your server
           requests against Soundverse models.</p>
 
         <label>Key Name (Optional)</label>
@@ -518,20 +518,20 @@
           <option value="test">Test (Free mock models, 0 credits billed)</option>
         </select>
 
-        <div style="margin-top:0.5rem; margin-bottom:1rem;">
+        <div style="margin-top:0.75rem; margin-bottom:1.5rem;">
           <label>Scopes</label>
           <div
-            style="font-size:0.85rem; color:#d1d5db; display:flex; flex-direction:column; gap:0.4rem; margin-top:0.25rem;">
-            <label style="cursor:pointer;"><input type="checkbox" id="scopeWrite" checked> <strong
+            style="font-size:0.85rem; color:#d1d5db; display:flex; flex-direction:column; gap:0.55rem; margin-top:0.35rem;">
+            <label style="cursor:pointer; display:flex; align-items:center; gap:0.5rem;"><input type="checkbox" id="scopeWrite" checked style="width:auto; margin:0;"> <strong
                 style="color:#fff;">generations:write</strong> — Create and cancel jobs</label>
-            <label style="cursor:pointer;"><input type="checkbox" id="scopeRead" checked> <strong
+            <label style="cursor:pointer; display:flex; align-items:center; gap:0.5rem;"><input type="checkbox" id="scopeRead" checked style="width:auto; margin:0;"> <strong
                 style="color:#fff;">generations:read</strong> — Read job status and usage</label>
           </div>
         </div>
 
-        <div style="display:flex; justify-content:flex-end; gap:0.5rem;">
+        <div style="display:flex; justify-content:flex-end; gap:0.75rem;">
           <button class="btn btn-secondary" onclick="closeKeyModal()">Cancel</button>
-          <button class="btn" onclick="submitCreateKey()">Create Key</button>
+          <button class="btn btn-cta" onclick="submitCreateKey()">Create Key</button>
         </div>
       </div>
     </div>
@@ -564,11 +564,11 @@
 
     <!-- GOOGLE AUTH POPUP / DIALOG -->
     <div id="googleAuthModalOverlay"
-      style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.85); backdrop-filter:blur(6px); z-index:115; justify-content:center; align-items:center;">
+      style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.85); backdrop-filter:blur(24px); -webkit-backdrop-filter:blur(24px); z-index:115; justify-content:center; align-items:center;">
       <div class="card"
-        style="width:100%; max-width:440px; border:1px solid #3b82f6; box-shadow:0 25px 50px -12px rgba(59,130,246,0.3);">
-        <h2 style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.75rem;">
-          <svg width="20" height="20" viewBox="0 0 18 18">
+        style="width:100%; max-width:460px; background: linear-gradient(135deg, rgba(255, 255, 255, 0.09) 0%, rgba(255, 255, 255, 0.02) 100%), rgba(14, 12, 20, 0.8); backdrop-filter: blur(36px); -webkit-backdrop-filter: blur(36px); border: 1px solid rgba(66, 133, 244, 0.35); border-top: 1px solid rgba(255, 255, 255, 0.32); border-left: 1px solid rgba(255, 255, 255, 0.24); border-radius: 26px; box-shadow: 0 30px 80px -15px rgba(0, 0, 0, 0.9), 0 0 50px -10px rgba(66, 133, 244, 0.25); padding: 2.25rem;">
+        <h2 style="display:flex; align-items:center; gap:0.6rem; margin-bottom:0.75rem; font-family:'Bricolage Grotesque', sans-serif; font-size:1.35rem;">
+          <svg width="22" height="22" viewBox="0 0 18 18">
             <path fill="#4285F4"
               d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.874 2.684-6.616z" />
             <path fill="#34A853"
@@ -580,7 +580,7 @@
           </svg>
           Sign in with Google
         </h2>
-        <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:1rem; line-height:1.4;">
+        <p style="font-size:0.86rem; color:var(--text-muted); margin-bottom:1.25rem; line-height:1.45;">
           Sign in securely using your Google account. Connects your developer identity directly.
         </p>
 
@@ -590,9 +590,9 @@
         <label>Display Name (optional)</label>
         <input type="text" id="googleDevName" placeholder="Developer Name" value="Google Developer">
 
-        <div style="display:flex; justify-content:flex-end; gap:0.5rem; margin-top:0.5rem;">
+        <div style="display:flex; justify-content:flex-end; gap:0.75rem; margin-top:1rem;">
           <button class="btn btn-secondary" onclick="closeGoogleModal()">Cancel</button>
-          <button class="btn" style="background:#2563eb;" onclick="submitGoogleDevAuth()">Sign In</button>
+          <button class="btn btn-cta" onclick="submitGoogleDevAuth()">Sign In</button>
         </div>
       </div>
     </div>
