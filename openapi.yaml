@@ -1,0 +1,177 @@
+openapi: 3.0.3
+info:
+  title: Soundverse AI Enterprise API
+  description: Self-serve developer API for AI music generation.
+  version: 1.0.0
+servers:
+  - url: http://localhost:3000
+    description: Local development server
+paths:
+  /v1/generations:
+    post:
+      summary: Start a music generation job
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: header
+          name: Idempotency-Key
+          schema:
+            type: string
+          required: false
+          description: Unique key to safely retry requests without duplicate creations or billing.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - prompt
+              properties:
+                prompt:
+                  type: string
+                  example: "uplifting acoustic pop for a travel vlog, warm guitars"
+                duration_sec:
+                  type: integer
+                  default: 30
+                  minimum: 5
+                  maximum: 300
+                license:
+                  type: string
+                  enum: [royalty_free, sync, full_ownership]
+                  default: royalty_free
+                instrumental:
+                  type: boolean
+                  default: true
+                metadata:
+                  type: object
+                  example:
+                    customer_ref: "vid_8812"
+      responses:
+        '202':
+          description: Job accepted and queued
+        '400':
+          description: Invalid request parameters
+        '401':
+          description: Missing or invalid API key
+        '403':
+          description: License unavailable on current plan or unverified email
+        '409':
+          description: Idempotent request currently in progress
+        '422':
+          description: Idempotency key reused with mismatched body
+        '429':
+          description: Rate limit or parallel generation limit reached
+    get:
+      summary: List generation jobs
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: query
+          name: status
+          schema:
+            type: string
+            enum: [queued, running, succeeded, failed, canceled]
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            default: 20
+        - in: query
+          name: offset
+          schema:
+            type: integer
+            default: 0
+      responses:
+        '200':
+          description: List of generations
+  /v1/generations/{id}:
+    get:
+      summary: Get generation status and result
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Generation job status and expiring audio URL
+        '404':
+          description: Job not found
+  /v1/generations/{id}/cancel:
+    post:
+      summary: Cancel a queued or running job
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Job canceled and credits refunded
+  /v1/usage:
+    get:
+      summary: Check credit allowance and remaining balance
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Account usage breakdown and remaining allowance
+  /v1/webhook_endpoints:
+    post:
+      summary: Register a webhook endpoint
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - url
+              properties:
+                url:
+                  type: string
+                  example: "https://api.mycorp.com/soundverse-webhook"
+                events:
+                  type: array
+                  items:
+                    type: string
+      responses:
+        '201':
+          description: Webhook endpoint registered
+    get:
+      summary: List registered webhook endpoints
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: List of endpoints
+  /v1/webhook_endpoints/{id}:
+    delete:
+      summary: Delete a webhook endpoint
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Endpoint deleted
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: APIKey
+

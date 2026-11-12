@@ -1,0 +1,30 @@
+{
+  "name": "soundverse-enterprise-api",
+  "version": "1.0.0",
+  "description": "Self-serve developer API for AI music generation — Soundverse Enterprise Platform",
+  "main": "dist/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node --watch src/index.js",
+    "test": "node tests/run-all.js"
+  },
+  "keywords": [
+    "soundverse",
+    "music",
+    "api",
+    "ai",
+    "enterprise"
+  ],
+  "license": "UNLICENSED",
+  "dependencies": {
+    "@fal-ai/client": "^1.10.1",
+    "@google/genai": "^3.2.0",
+    "@huggingface/inference": "^4.13.32",
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.1",
+    "google-auth-library": "^11.3.4",
+    "jsonwebtoken": "^9.0.2"
+  }
+}

@@ -1,0 +1,1307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Soundverse AI — Enterprise Developer Platform</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <style>
+    :root {
+      --bg: #0b0f19;
+      --card-bg: #111827;
+      --card-border: #1f2937;
+      --primary: #6366f1;
+      --primary-hover: #4f46e5;
+      --accent: #ec4899;
+      --text: #f3f4f6;
+      --text-muted: #9ca3af;
+      --success: #10b981;
+      --danger: #ef4444;
+      --warning: #f59e0b;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    header {
+      background: rgba(17, 24, 39, 0.95);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--card-border);
+      padding: 0.75rem 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+      flex-wrap: wrap;
+    }
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+    .nav-btn {
+      color: #94a3b8;
+      text-decoration: none;
+      font-size: 0.8rem;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.35rem 0.65rem;
+      border-radius: 6px;
+      background: #1e293b;
+      border: 1px solid #334155;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+    .nav-btn:hover {
+      color: #fff;
+      background: #334155;
+      border-color: #475569;
+    }
+    .logo {
+      font-size: 1.15rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: #fff;
+      white-space: nowrap;
+    }
+    .logo span { color: var(--accent); }
+    .badge {
+      font-size: 0.75rem;
+      background: #312e81;
+      color: #c7d2fe;
+      padding: 0.2rem 0.5rem;
+      border-radius: 9999px;
+      font-weight: 600;
+    }
+    main {
+      flex: 1;
+      padding: 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+      width: 100%;
+    }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 1.5rem; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+    @media (max-width: 900px) {
+      .grid-2 { grid-template-columns: 1fr; }
+    }
+    .table-container {
+      width: 100%;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      overflow: hidden; /* Prevent visual spilling */
+    }
+    .card h2 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .btn {
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 0.6rem 1.2rem;
+      font-weight: 500;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: background 0.15s;
+    }
+    .btn:hover { background: var(--primary-hover); }
+    .btn-secondary { background: #374151; color: #e5e7eb; }
+    .btn-secondary:hover { background: #4b5563; }
+    .btn-danger { background: #991b1b; color: #fecaca; }
+    .btn-danger:hover { background: var(--danger); color: #fff; }
+    input, select, textarea {
+      width: 100%;
+      background: #1f2937;
+      border: 1px solid #374151;
+      color: #fff;
+      padding: 0.6rem 0.8rem;
+      border-radius: 60px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      margin-top: 0.25rem;
+      margin-bottom: 1rem;
+      outline: none;
+    }
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--primary);
+    }
+    label { font-size: 0.85rem; color: var(--text-muted); font-weight: 500; }
+    .secret-box {
+      background: #0f172a;
+      border: 1px dashed var(--warning);
+      border-radius: 8px;
+      padding: 1rem;
+      margin: 1rem 0;
+      word-break: break-all;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem;
+      color: #fde68a;
+    }
+    table { width: 100%; border-collapse: collapse; margin-top: 0.5rem; }
+    th, td {
+      padding: 0.6rem;
+      text-align: left;
+      font-size: 0.85rem;
+      border-bottom: 1px solid #1f2937;
+    }
+    th { color: var(--text-muted); font-weight: 500; }
+    .progress-bar {
+      height: 8px;
+      background: #374151;
+      border-radius: 9999px;
+      overflow: hidden;
+      margin: 0.5rem 0;
+    }
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--primary), var(--accent));
+      width: 0%;
+      transition: width 0.3s;
+    }
+    .mono { font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; }
+    .tag {
+      font-size: 0.75rem;
+      padding: 0.15rem 0.4rem;
+      border-radius: 4px;
+      font-weight: 600;
+    }
+    .tag-live { background: #064e3b; color: #a7f3d0; }
+    .tag-test { background: #3730a3; color: #c7d2fe; }
+    .tag-revoked { background: #7f1d1d; color: #fecaca; }
+    .status-succeeded { color: var(--success); }
+    .status-queued { color: var(--warning); }
+    .status-running { color: var(--accent); }
+    .status-failed { color: var(--danger); }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-left">
+      <div class="logo">
+        <span>⚡</span> Soundverse <span class="badge">Enterprise API</span>
+      </div>
+      <div style="display:flex; gap:0.5rem; align-items:center;">
+        <a href="/docs" target="_blank" class="nav-btn">
+          <span>📖</span> Swagger Docs
+        </a>
+        <a href="/quickstart" target="_blank" class="nav-btn">
+          <span>🚀</span> Quickstart
+        </a>
+      </div>
+    </div>
+
+    <div class="header-right">
+      <div id="workspaceContainer" style="display:none; align-items:center; gap:0.4rem;">
+        <label style="font-size:0.75rem; color:var(--text-muted); margin:0;">Workspace:</label>
+        <select id="workspaceSelector" onchange="switchWorkspace(this.value)" style="margin:0; padding:0.35rem 0.5rem; background:#1e293b; border:1px solid #3b82f6; font-size:0.8rem; border-radius:6px; color:#fff; cursor:pointer; max-width:210px; text-overflow:ellipsis;">
+        </select>
+      </div>
+      <span id="accountEmail" style="color: var(--text-muted); font-size: 0.85rem; font-weight: 500;">Not logged in</span>
+      <button class="btn btn-secondary" id="logoutBtn" style="display: none; padding: 0.35rem 0.75rem; font-size: 0.8rem;" onclick="logout()">Logout</button>
+    </div>
+  </header>
+
+  <main>
+  <!-- MODAL POPUP FOR KEY CREATION -->
+  <div id="keyModalOverlay" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.75); backdrop-filter:blur(4px); z-index:100; justify-content:center; align-items:center;">
+    <div class="card" style="width:100%; max-width:480px; box-shadow:0 20px 25px -5px rgba(0,0,0,0.5); border:1px solid #374151; animation: popIn 0.2s ease-out;">
+      <h2 style="margin-bottom:0.5rem;">Generate API Key</h2>
+      <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:1rem;">API keys authenticate your server requests against Soundverse models.</p>
+      
+      <label>Key Name (Optional)</label>
+      <input type="text" id="modalKeyName" placeholder="e.g. Production Backend, Test Client">
+
+      <label>Environment Mode</label>
+      <select id="modalKeyMode">
+        <option value="live">Live (Calls models, consumes plan allowance)</option>
+        <option value="test">Test (Free mock models, 0 credits billed)</option>
+      </select>
+
+      <div style="margin-top:0.5rem; margin-bottom:1rem;">
+        <label>Scopes</label>
+        <div style="font-size:0.85rem; color:#d1d5db; display:flex; flex-direction:column; gap:0.4rem; margin-top:0.25rem;">
+          <label style="cursor:pointer;"><input type="checkbox" id="scopeWrite" checked> <strong style="color:#fff;">generations:write</strong> — Create and cancel jobs</label>
+          <label style="cursor:pointer;"><input type="checkbox" id="scopeRead" checked> <strong style="color:#fff;">generations:read</strong> — Read job status and usage</label>
+        </div>
+      </div>
+
+      <div style="display:flex; justify-content:flex-end; gap:0.5rem;">
+        <button class="btn btn-secondary" onclick="closeKeyModal()">Cancel</button>
+        <button class="btn" onclick="submitCreateKey()">Create Key</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SUCCESS POPUP / SECRET DIALOG -->
+  <div id="secretModalOverlay" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.85); backdrop-filter:blur(6px); z-index:110; justify-content:center; align-items:center;">
+    <div class="card" style="width:100%; max-width:520px; border:1px solid var(--warning); box-shadow:0 25px 50px -12px rgba(245,158,11,0.25);">
+      <h2 style="color:var(--warning); display:flex; align-items:center; gap:0.5rem;">
+        <span>🔒</span> Save Your Secret API Key
+      </h2>
+      <p style="font-size:0.85rem; color:#fde68a; margin:0.5rem 0 1rem 0; line-height:1.4;">
+        <strong>Important:</strong> This secret will <u>only be displayed once</u>. We store only an irreversible SHA-256 hash. If lost, you must rotate or generate a new key.
+      </p>
+
+      <div class="secret-box" id="modalSecretDisplay" style="margin:0 0 1rem 0; padding:1rem; font-size:0.95rem; user-select:all;">
+      </div>
+
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <button class="btn" id="copyKeyBtn" onclick="copySecretToClipboard()" style="background:#2563eb;">
+          📋 Copy to Clipboard
+        </button>
+        <button class="btn btn-secondary" onclick="closeSecretModal()">Done</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- GOOGLE AUTH POPUP / DIALOG -->
+  <div id="googleAuthModalOverlay" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.85); backdrop-filter:blur(6px); z-index:115; justify-content:center; align-items:center;">
+    <div class="card" style="width:100%; max-width:440px; border:1px solid #3b82f6; box-shadow:0 25px 50px -12px rgba(59,130,246,0.3);">
+      <h2 style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.75rem;">
+        <svg width="20" height="20" viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.874 2.684-6.616z"/><path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.184l-2.908-2.258c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z"/><path fill="#FBBC05" d="M3.964 10.707c-.18-.54-.282-1.117-.282-1.707s.102-1.167.282-1.707V4.961H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.039l3.007-2.332z"/><path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.961L3.964 7.293C4.672 5.166 6.656 3.58 9 3.58z"/></svg>
+        Sign in with Google
+      </h2>
+      <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:1rem; line-height:1.4;">
+        Sign in securely using your Google account. Connects your developer identity directly.
+      </p>
+      
+      <label>Google Account Email</label>
+      <input type="email" id="googleDevEmail" placeholder="developer@gmail.com" value="google.developer@gmail.com">
+
+      <label>Display Name (optional)</label>
+      <input type="text" id="googleDevName" placeholder="Developer Name" value="Google Developer">
+
+      <div style="display:flex; justify-content:flex-end; gap:0.5rem; margin-top:0.5rem;">
+        <button class="btn btn-secondary" onclick="closeGoogleModal()">Cancel</button>
+        <button class="btn" style="background:#2563eb;" onclick="submitGoogleDevAuth()">Sign In</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATION -->
+  <div id="toastNotification" style="display:none; position:fixed; bottom:24px; right:24px; background:#1e293b; border:1px solid #334155; padding:1rem 1.25rem; border-radius:10px; box-shadow:0 10px 15px -3px rgba(0,0,0,0.5); z-index:200; max-width:380px;">
+    <div style="display:flex; align-items:center; gap:0.75rem;">
+      <span id="toastIcon" style="font-size:1.25rem;">⚡</span>
+      <div>
+        <div id="toastTitle" style="font-weight:600; font-size:0.9rem; color:#fff;"></div>
+        <div id="toastMsg" style="font-size:0.8rem; color:var(--text-muted); margin-top:2px;"></div>
+      </div>
+    </div>
+  </div>
+
+  <style>
+    @keyframes popIn {
+      from { transform: scale(0.95); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+  </style>
+    <div id="authSection" class="card" style="max-width: 480px; margin: 2rem auto;">
+      <h2 id="authTitle" style="margin-bottom: 1.25rem;">Developer Sign Up / Login</h2>
+
+      <!-- GOOGLE ONE-TAP / GSI OFFICIAL BUTTON CONTAINER -->
+      <div id="g_id_signin_container" style="display: none; justify-content: center; margin-bottom: 0.75rem;"></div>
+
+      <!-- GOOGLE SIGN IN BUTTON (ALWAYS CLICKABLE) -->
+      <button id="customGoogleBtn" type="button" onclick="handleGoogleAuth()" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px; background: #ffffff; color: #1f2937; border: 1px solid #d1d5db; border-radius: 8px; padding: 0.7rem 1rem; font-weight: 600; font-size: 0.95rem; cursor: pointer; transition: all 0.15s; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+        <svg width="18" height="18" viewBox="0 0 18 18">
+          <path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.874 2.684-6.616z"/>
+          <path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.184l-2.908-2.258c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z"/>
+          <path fill="#FBBC05" d="M3.964 10.707c-.18-.54-.282-1.117-.282-1.707s.102-1.167.282-1.707V4.961H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.039l3.007-2.332z"/>
+          <path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.961L3.964 7.293C4.672 5.166 6.656 3.58 9 3.58z"/>
+        </svg>
+        <span>Continue with Google</span>
+      </button>
+
+      <!-- OR DIVIDER -->
+      <div style="display: flex; align-items: center; margin: 1.25rem 0; color: var(--text-muted); font-size: 0.78rem;">
+        <div style="flex: 1; height: 1px; background: #374151;"></div>
+        <span style="padding: 0 0.75rem; text-transform: uppercase; letter-spacing: 0.05em;">or continue with email</span>
+        <div style="flex: 1; height: 1px; background: #374151;"></div>
+      </div>
+
+      <label>Email Address</label>
+      <input type="email" id="authEmail" placeholder="developer@company.com" value="demo@soundverse.ai">
+      <label>Password</label>
+      <input type="password" id="authPassword" placeholder="••••••••••••" value="Enterprise2026!">
+      
+      <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem;">
+        <button class="btn" style="flex: 1;" onclick="handleSignup()">Sign Up</button>
+        <button class="btn btn-secondary" style="flex: 1;" onclick="handleLogin()">Log In</button>
+      </div>
+
+      <div id="authAlert" style="margin-top: 1rem; font-size: 0.85rem; display: none;"></div>
+    </div>
+
+    <!-- MAIN DASHBOARD (HIDDEN UNTIL LOGIN) -->
+    <div id="dashboardSection" style="display: none;">
+      <!-- TOP METRICS ROW -->
+      <div class="grid" style="margin-bottom: 1.5rem;">
+        <div class="card">
+          <h2>Account & Plan <span class="badge" id="planBadge">Starter</span></h2>
+          <div style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 0.5rem;">
+            Email: <strong id="dashEmail" style="color: #fff;">-</strong>
+          </div>
+          <div style="display: flex; gap: 0.5rem; align-items: center; margin-top: 1rem;">
+            <select id="planSelector" style="margin-bottom: 0;">
+              <option value="sandbox">Sandbox (0 credits, test keys)</option>
+              <option value="starter" selected>Starter (200 credits, 3 parallel)</option>
+              <option value="growth">Growth (2000 credits, 10 parallel)</option>
+            </select>
+            <button id="planUpdateBtn" class="btn btn-secondary" onclick="changePlan()">Update Plan</button>
+          </div>
+          <div id="planRoleNotice" style="display:none; font-size:0.75rem; color:#f87171; margin-top:0.4rem;">
+            🔒 Only account owners can change billing plans.
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>Monthly Usage & Allowance</h2>
+          <div style="display: flex; justify-content: space-between; font-size: 0.9rem; margin-bottom: 0.25rem;">
+            <span>Credits Used: <strong id="creditsUsed">0</strong></span>
+            <span>Total Allowance: <strong id="creditsTotal">200</strong></span>
+          </div>
+          <div class="progress-bar">
+            <div id="progressFill" class="progress-fill"></div>
+          </div>
+          <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.5rem; display:flex; justify-content:space-between;">
+            <span>Remaining: <strong id="creditsRemaining" style="color: var(--success);">200</strong> credits</span>
+            <span id="beyondAllowanceBadge" class="badge" style="background:#374151;">Hard Stop</span>
+          </div>
+
+          <!-- USAGE BREAKDOWN TABS -->
+          <div style="margin-top: 1.25rem; border-top: 1px solid var(--card-border); padding-top: 0.75rem;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem;">
+              <span style="font-size:0.8rem; font-weight:600; color:#fff;">Usage Breakdown</span>
+              <div style="display:flex; gap:0.25rem;">
+                <button class="btn btn-secondary" id="tabKeyBtn" style="padding:0.15rem 0.5rem; font-size:0.75rem;" onclick="switchUsageTab('key')">Per Key</button>
+                <button class="btn btn-secondary" id="tabDayBtn" style="padding:0.15rem 0.5rem; font-size:0.75rem;" onclick="switchUsageTab('day')">Per Day</button>
+              </div>
+            </div>
+
+            <!-- Per Key Table -->
+            <div id="usageByKeyView" style="max-height:110px; overflow-y:auto;">
+              <table style="font-size:0.75rem;">
+                <thead>
+                  <tr><th>Key Prefix</th><th>Mode</th><th style="text-align:right;">Credits</th></tr>
+                </thead>
+                <tbody id="usageByKeyTbody">
+                  <tr><td colspan="3" style="color:var(--text-muted);">No key usage yet.</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Per Day Table -->
+            <div id="usageByDayView" style="display:none; max-height:110px; overflow-y:auto;">
+              <table style="font-size:0.75rem;">
+                <thead>
+                  <tr><th>Date</th><th style="text-align:right;">Credits Used</th></tr>
+                </thead>
+                <tbody id="usageByDayTbody">
+                  <tr><td colspan="2" style="color:var(--text-muted);">No daily usage yet.</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- MIDDLE ROW: API KEYS & GENERATION TESTER -->
+      <div class="grid" style="margin-bottom: 1.5rem;">
+        <!-- API KEYS -->
+        <div class="card">
+          <h2>
+            API Keys
+            <button id="newKeyBtn" class="btn" onclick="openCreateKeyModal()">+ New Key</button>
+          </h2>
+
+          <div id="newSecretBanner" style="display: none;" class="secret-box">
+            <strong>⚠️ Copy your key now. You won't be able to see it again!</strong><br>
+            <div id="secretText" style="margin-top: 0.5rem; font-weight: bold; font-size: 1rem;"></div>
+          </div>
+
+          <div style="overflow-x: auto;">
+          <table>
+            <thead>
+              <tr>
+                <th>Key Prefix</th>
+                <th>Mode</th>
+                <th>Scopes</th>
+                <th>Created</th>
+                <th>Last Used</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="keysTableBody">
+              <tr><td colspan="7" style="color: var(--text-muted);">No keys found.</td></tr>
+            </tbody>
+          </table>
+          </div>
+        </div>
+
+        <!-- GENERATION API TESTER -->
+        <div class="card">
+          <h2>Generate AI Music (Live / Test)</h2>
+          <label>Select API Key for Request</label>
+          <select id="activeKeySelect"></select>
+
+          <label>Music Prompt</label>
+          <input type="text" id="genPrompt" value="Uplifting acoustic pop with warm guitars for a travel vlog">
+
+          <div style="display: flex; gap: 1rem;">
+            <div style="flex: 1;">
+              <label>Duration (seconds)</label>
+              <input type="number" id="genDuration" value="30">
+            </div>
+            <div style="flex: 1;">
+              <label>License</label>
+              <select id="genLicense">
+                <option value="royalty_free">Royalty Free (1 credit)</option>
+                <option value="sync">Sync License (6 credits)</option>
+                <option value="full_ownership">Full Ownership (14 credits)</option>
+              </select>
+            </div>
+          </div>
+
+          <button id="generateMusicBtn" class="btn" style="width: 100%;" onclick="submitGeneration()">Trigger Generation (POST /v1/generations)</button>
+
+          <div id="genStatusAlert" style="margin-top: 1rem; font-size: 0.85rem; display: none;"></div>
+        </div>
+      </div>
+
+      <!-- ROW 3: RECENT GENERATIONS (FULL WIDTH FOR AMPLE TABLE & AUDIO PLAYER ROOM) -->
+      <div class="card" style="margin-bottom: 1.5rem;">
+        <h2>
+          <span>Recent Generations (Real-time Polling)</span>
+          <span style="font-size:0.75rem; color:var(--text-muted); font-weight:normal;">Auto-refreshes every 2s</span>
+        </h2>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th style="min-width:140px;">Job ID</th>
+                <th style="min-width:110px;">Status</th>
+                <th style="min-width:110px;">License</th>
+                <th style="min-width:80px;">Credits</th>
+                <th style="min-width:260px;">Audio Player</th>
+                <th style="min-width:100px;">Created</th>
+              </tr>
+            </thead>
+            <tbody id="gensTableBody">
+              <tr><td colspan="6" style="color: var(--text-muted); text-align:center; padding:1.5rem;">No generation jobs yet. Trigger one above!</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ROW 4: SECURITY AUDIT LOG & TEAM MEMBERS (CLEAN 2-COLUMN GRID) -->
+      <div class="grid-2">
+        <div class="card">
+          <h2>Security Audit Log</h2>
+          <div class="table-container" style="max-height:260px; overflow-y:auto;">
+            <table>
+              <thead>
+                <tr>
+                  <th>Action</th>
+                  <th>Resource</th>
+                  <th>Time</th>
+                </tr>
+              </thead>
+              <tbody id="auditTableBody">
+                <tr><td colspan="3" style="color: var(--text-muted);">No audit entries yet.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- TEAM MEMBERS CARD -->
+        <div class="card">
+          <h2>
+            <span>Team Members</span>
+            <button id="addMemberBtn" class="btn" style="padding:0.3rem 0.6rem; font-size:0.75rem;" onclick="openAddMemberModal()">+ Add Member</button>
+          </h2>
+          <div id="teamRoleNotice" style="display:none; font-size:0.75rem; color:var(--text-muted); margin-bottom:0.5rem;">
+            🔒 Only account owners can invite new team members.
+          </div>
+          <div class="table-container" style="max-height:260px; overflow-y:auto;">
+            <table>
+              <thead>
+                <tr>
+                  <th>Email</th>
+                  <th>Role</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="teamTableBody">
+                <tr><td colspan="3" style="color: var(--text-muted);">Loading team...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- BOTTOM ROW: DEVELOPER DOCUMENTATION & QUICKSTART CARD -->
+      <div class="card" style="margin-top: 1.5rem; border: 1px solid #312e81; background: linear-gradient(180deg, #111827 0%, #0f172a 100%);">
+        <h2>
+          <span>📚 Developer API Resources & Quickstart</span>
+          <div style="display:flex; gap:0.5rem;">
+            <a href="/openapi.yaml" download="openapi.yaml" class="btn btn-secondary" style="font-size:0.75rem; padding:0.3rem 0.6rem;">Download openapi.yaml</a>
+            <a href="/docs" target="_blank" class="btn" style="font-size:0.75rem; padding:0.3rem 0.6rem; background:#4f46e5;">Open Interactive API Docs ↗</a>
+          </div>
+        </h2>
+        <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:1rem; line-height:1.5;">
+          Get your first AI-generated track in under five minutes. Use your generated API key (Live or Test) in the <code>Authorization: Bearer &lt;key&gt;</code> header.
+        </p>
+        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap:1rem;">
+          <div style="background:#0b0f19; padding:1rem; border-radius:8px; border:1px solid #1f2937;">
+            <div style="color:#a5b4fc; font-size:0.8rem; font-weight:600; margin-bottom:0.4rem;">1. Generate Music Track (cURL)</div>
+            <pre style="color:#e2e8f0; font-family:'JetBrains Mono',monospace; font-size:0.75rem; overflow-x:auto; margin:0; line-height:1.4;"><code>curl -X POST http://localhost:3000/v1/generations \
+  -H "Authorization: Bearer sk_test_..." \
+  -H "Content-Type: application/json" \
+  -H "Idempotency-Key: job-$(date +%s)" \
+  -d '{
+    "prompt": "Lo-fi chill beats with mellow piano",
+    "duration_sec": 30,
+    "license": "royalty_free"
+  }'</code></pre>
+          </div>
+          <div style="background:#0b0f19; padding:1rem; border-radius:8px; border:1px solid #1f2937;">
+            <div style="color:#a5b4fc; font-size:0.8rem; font-weight:600; margin-bottom:0.4rem;">2. Poll Status & Fetch Audio URL</div>
+            <pre style="color:#e2e8f0; font-family:'JetBrains Mono',monospace; font-size:0.75rem; overflow-x:auto; margin:0; line-height:1.4;"><code>curl http://localhost:3000/v1/generations/gen_xyz123 \
+  -H "Authorization: Bearer sk_test_..."
+
+# Response when succeeded:
+# {
+#   "status": "succeeded",
+#   "output": {
+#     "audio_url": "http://localhost:3000/v1/audio/...",
+#     "duration_sec": 30
+#   }
+# }</code></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- ADD TEAM MEMBER MODAL -->
+  <div id="teamModalOverlay" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.75); backdrop-filter:blur(4px); z-index:100; justify-content:center; align-items:center;">
+    <div class="card" style="width:100%; max-width:440px; box-shadow:0 20px 25px -5px rgba(0,0,0,0.5); border:1px solid #374151;">
+      <h2>Add Team Member</h2>
+      <label>Email Address</label>
+      <input type="email" id="teamMemberEmail" placeholder="colleague@company.com">
+      
+      <label>Role</label>
+      <select id="teamMemberRole">
+        <option value="developer">Developer (Can create keys & trigger jobs)</option>
+        <option value="viewer">Viewer (Read-only access to usage & status)</option>
+        <option value="owner">Owner (Full administrative permissions)</option>
+      </select>
+
+      <div style="display:flex; justify-content:flex-end; gap:0.5rem; margin-top:1rem;">
+        <button class="btn btn-secondary" onclick="closeAddMemberModal()">Cancel</button>
+        <button class="btn" onclick="submitAddMember()">Add Member</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let token = localStorage.getItem('soundverse_token') || '';
+    let currentAccount = null;
+    let availableKeys = [];
+    let savedSecretMap = JSON.parse(localStorage.getItem('saved_secrets') || '{}');
+
+    async function req(url, options = {}) {
+      const headers = { 'Content-Type': 'application/json', ...(options.headers || {}) };
+      if (token) headers['Authorization'] = `Bearer ${token}`;
+      const activeWorkspace = localStorage.getItem('soundverse_account_id');
+      if (activeWorkspace) headers['X-Account-Id'] = activeWorkspace;
+      const res = await fetch(url, { ...options, headers });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        throw new Error(data.error?.message || data.message || `Request failed (${res.status})`);
+      }
+      return data;
+    }
+
+    function switchWorkspace(accountId) {
+      localStorage.setItem('soundverse_account_id', accountId);
+      loadDashboard();
+    }
+
+    let googleClientId = '';
+    let gsiInitialized = false;
+
+    async function initGoogleAuth() {
+      try {
+        const conf = await req('/auth/config');
+        if (conf && conf.googleClientId) {
+          googleClientId = conf.googleClientId;
+          let attempts = 0;
+          const checkGsi = setInterval(() => {
+            attempts++;
+            if (window.google?.accounts?.id) {
+              setupGsi();
+              clearInterval(checkGsi);
+            } else if (attempts > 30) {
+              clearInterval(checkGsi);
+            }
+          }, 200);
+        }
+      } catch (e) {
+        console.warn('Could not fetch auth config:', e.message);
+      }
+    }
+
+    function setupGsi() {
+      if (!googleClientId || !window.google?.accounts?.id || gsiInitialized) return;
+      try {
+        google.accounts.id.initialize({
+          client_id: googleClientId,
+          callback: handleGoogleCredentialResponse,
+          auto_select: false,
+          cancel_on_tap_outside: true,
+        });
+
+        const container = document.getElementById('g_id_signin_container');
+        if (container) {
+          container.style.display = 'flex';
+          const customBtn = document.getElementById('customGoogleBtn');
+          if (customBtn) customBtn.style.display = 'none';
+
+          google.accounts.id.renderButton(container, {
+            theme: 'outline',
+            size: 'large',
+            width: 380,
+            text: 'continue_with',
+            shape: 'rectangular',
+          });
+        }
+        gsiInitialized = true;
+      } catch (err) {
+        console.warn('Google GSI init error:', err);
+      }
+    }
+
+    async function handleGoogleCredentialResponse(response) {
+      const alert = document.getElementById('authAlert');
+      try {
+        const res = await req('/auth/google', {
+          method: 'POST',
+          body: JSON.stringify({ credential: response.credential }),
+        });
+        token = res.token;
+        localStorage.setItem('soundverse_token', token);
+        await loadDashboard();
+      } catch (e) {
+        alert.style.display = 'block';
+        alert.style.color = 'var(--danger)';
+        alert.innerText = e.message;
+      }
+    }
+
+    function handleGoogleAuth() {
+      if (googleClientId && window.google?.accounts?.id) {
+        google.accounts.id.prompt();
+      } else {
+        document.getElementById('googleAuthModalOverlay').style.display = 'flex';
+      }
+    }
+
+    function closeGoogleModal() {
+      document.getElementById('googleAuthModalOverlay').style.display = 'none';
+    }
+
+    async function submitGoogleDevAuth() {
+      const email = document.getElementById('googleDevEmail').value.trim();
+      const name = document.getElementById('googleDevName').value.trim();
+      const alert = document.getElementById('authAlert');
+      if (!email) {
+        alert.style.display = 'block';
+        alert.style.color = 'var(--danger)';
+        alert.innerText = 'Please enter a valid Google account email';
+        return;
+      }
+
+      closeGoogleModal();
+      try {
+        const res = await req('/auth/google', {
+          method: 'POST',
+          body: JSON.stringify({
+            email,
+            name,
+            googleId: 'google_' + Math.random().toString(36).substring(2, 10),
+          }),
+        });
+        token = res.token;
+        localStorage.setItem('soundverse_token', token);
+        await loadDashboard();
+      } catch (e) {
+        alert.style.display = 'block';
+        alert.style.color = 'var(--danger)';
+        alert.innerText = e.message;
+      }
+    }
+
+    async function handleSignup() {
+      const email = document.getElementById('authEmail').value;
+      const password = document.getElementById('authPassword').value;
+      const alert = document.getElementById('authAlert');
+      try {
+        const res = await req('/auth/signup', { method: 'POST', body: JSON.stringify({ email, password }) });
+        alert.style.display = 'block';
+        alert.style.color = 'var(--success)';
+        alert.innerHTML = `Signup successful! Email verified automatically in dev. Logging in...`;
+        // Auto-verify in development for quick test
+        if (res.verification_link) {
+          const urlObj = new URL(res.verification_link);
+          await fetch(urlObj.pathname + urlObj.search);
+        }
+        await handleLogin();
+      } catch (e) {
+        alert.style.display = 'block';
+        alert.style.color = 'var(--danger)';
+        alert.innerText = e.message;
+      }
+    }
+
+    async function handleLogin() {
+      const email = document.getElementById('authEmail').value;
+      const password = document.getElementById('authPassword').value;
+      const alert = document.getElementById('authAlert');
+      try {
+        const res = await req('/auth/login', { method: 'POST', body: JSON.stringify({ email, password }) });
+        token = res.token;
+        localStorage.setItem('soundverse_token', token);
+        await loadDashboard();
+      } catch (e) {
+        alert.style.display = 'block';
+        alert.style.color = 'var(--danger)';
+        alert.innerText = e.message;
+      }
+    }
+
+    function logout() {
+      token = '';
+      localStorage.removeItem('soundverse_token');
+      location.reload();
+    }
+
+    async function loadDashboard() {
+      try {
+        const me = await req('/dashboard/me');
+        currentAccount = me.account;
+        document.getElementById('authSection').style.display = 'none';
+        document.getElementById('dashboardSection').style.display = 'block';
+        document.getElementById('logoutBtn').style.display = 'block';
+
+        // Workspace Switcher
+        const wsContainer = document.getElementById('workspaceContainer');
+        const wsSelector = document.getElementById('workspaceSelector');
+        if (me.memberships && me.memberships.length > 1) {
+          wsContainer.style.display = 'flex';
+          wsSelector.innerHTML = me.memberships.map(m => `
+            <option value="${m.accountId}" ${m.accountId === me.account.id ? 'selected' : ''}>
+              ${m.isOwner ? '👑 ' : '🏢 '} ${m.ownerEmail} (${m.role.toUpperCase()})
+            </option>
+          `).join('');
+        } else if (me.memberships && me.memberships.length === 1 && !me.isOwner) {
+          wsContainer.style.display = 'flex';
+          wsSelector.innerHTML = `<option value="${me.account.id}" selected>🏢 ${me.account.email} (${(me.role || 'viewer').toUpperCase()})</option>`;
+        } else {
+          wsContainer.style.display = 'none';
+        }
+
+        const isGoogle = me.account.auth_provider === 'google';
+        const role = me.role || 'owner';
+        const roleColor = role === 'owner' ? '#7c3aed' : (role === 'developer' ? '#2563eb' : '#059669');
+        const roleBadge = `<span class="badge" style="background:${roleColor}; color:#fff; margin-left:6px; font-size:0.75rem; text-transform:uppercase;">${role}</span>`;
+        const authBadge = isGoogle
+          ? '<span class="badge" style="background:#1e3a8a; color:#93c5fd; margin-left:6px; font-size:0.75rem;">Google Auth</span>'
+          : '<span class="badge" style="background:#374151; color:#9ca3af; margin-left:6px; font-size:0.75rem;">Email & Password</span>';
+
+        const displayUser = me.account.userEmail || me.account.email;
+        document.getElementById('accountEmail').innerHTML = `${displayUser} ${roleBadge}`;
+        document.getElementById('dashEmail').innerHTML = `${me.account.email} ${roleBadge}`;
+        document.getElementById('planBadge').innerText = me.plan.display_name;
+        document.getElementById('planSelector').value = me.account.plan;
+
+        // Role-Based UI Permissions
+        const isOwner = role === 'owner';
+        const isViewer = role === 'viewer';
+
+        // Plan updates: Owner only
+        const planSelector = document.getElementById('planSelector');
+        const planBtn = document.getElementById('planUpdateBtn');
+        const planNotice = document.getElementById('planRoleNotice');
+        if (planSelector) planSelector.disabled = !isOwner;
+        if (planBtn) {
+          planBtn.disabled = !isOwner;
+          planBtn.style.opacity = isOwner ? '1' : '0.4';
+          planBtn.style.cursor = isOwner ? 'pointer' : 'not-allowed';
+        }
+        if (planNotice) planNotice.style.display = isOwner ? 'none' : 'block';
+
+        // Member management: Owner only
+        const addMemberBtn = document.getElementById('addMemberBtn');
+        const teamNotice = document.getElementById('teamRoleNotice');
+        if (addMemberBtn) addMemberBtn.style.display = isOwner ? 'inline-block' : 'none';
+        if (teamNotice) teamNotice.style.display = isOwner ? 'none' : 'block';
+
+        // Key creation: Owner and Developer only (Viewer is read-only)
+        const newKeyBtn = document.getElementById('newKeyBtn');
+        if (newKeyBtn) {
+          newKeyBtn.disabled = isViewer;
+          newKeyBtn.style.opacity = isViewer ? '0.4' : '1';
+          newKeyBtn.style.cursor = isViewer ? 'not-allowed' : 'pointer';
+          newKeyBtn.innerText = isViewer ? '🔒 View Only' : '+ New Key';
+        }
+
+        // Music generation: Owner and Developer only
+        const genBtn = document.getElementById('generateMusicBtn');
+        if (genBtn) {
+          genBtn.disabled = isViewer;
+          genBtn.style.opacity = isViewer ? '0.4' : '1';
+          genBtn.style.cursor = isViewer ? 'not-allowed' : 'pointer';
+          genBtn.innerText = isViewer ? 'Generation Disabled for Viewers' : 'Trigger Generation (POST /v1/generations)';
+        }
+
+        await Promise.all([loadKeys(), loadUsage(), loadGenerations(), loadAudit(), loadTeam()]);
+      } catch (e) {
+        token = '';
+        localStorage.removeItem('soundverse_token');
+        document.getElementById('authSection').style.display = 'block';
+        document.getElementById('dashboardSection').style.display = 'none';
+      }
+    }
+
+    function switchUsageTab(tab) {
+      if (tab === 'key') {
+        document.getElementById('usageByKeyView').style.display = 'block';
+        document.getElementById('usageByDayView').style.display = 'none';
+        document.getElementById('tabKeyBtn').style.background = '#4b5563';
+        document.getElementById('tabDayBtn').style.background = '#374151';
+      } else {
+        document.getElementById('usageByKeyView').style.display = 'none';
+        document.getElementById('usageByDayView').style.display = 'block';
+        document.getElementById('tabKeyBtn').style.background = '#374151';
+        document.getElementById('tabDayBtn').style.background = '#4b5563';
+      }
+    }
+
+    async function loadUsage() {
+      const usage = await req('/dashboard/usage');
+      document.getElementById('creditsUsed').innerText = usage.allowance.used;
+      document.getElementById('creditsTotal').innerText = usage.allowance.total;
+      document.getElementById('creditsRemaining').innerText = usage.allowance.remaining;
+      const pct = usage.allowance.total > 0 ? (usage.allowance.used / usage.allowance.total) * 100 : 0;
+      document.getElementById('progressFill').style.width = `${Math.min(pct, 100)}%`;
+
+      const beyondEl = document.getElementById('beyondAllowanceBadge');
+      if (beyondEl) {
+        beyondEl.innerText = usage.beyond_allowance === 'hard_stop' ? 'Hard Stop Beyond' : (usage.beyond_allowance === 'overage' ? 'Overage Billed' : 'Sandbox Only');
+        beyondEl.style.background = usage.beyond_allowance === 'overage' ? '#065f46' : '#374151';
+      }
+
+      // Render Usage Per Key
+      const keyTbody = document.getElementById('usageByKeyTbody');
+      if (usage.by_key && usage.by_key.length > 0) {
+        keyTbody.innerHTML = usage.by_key.map(k => `
+          <tr>
+            <td class="mono">${k.prefix ? k.prefix + '...' : 'Unknown'}</td>
+            <td><span class="tag tag-${k.mode || 'live'}">${(k.mode || 'LIVE').toUpperCase()}</span></td>
+            <td style="text-align:right;"><strong>${k.credits}</strong></td>
+          </tr>
+        `).join('');
+      } else {
+        keyTbody.innerHTML = '<tr><td colspan="3" style="color:var(--text-muted);">No key usage in this period.</td></tr>';
+      }
+
+      // Render Usage Per Day
+      const dayTbody = document.getElementById('usageByDayTbody');
+      if (usage.by_day && usage.by_day.length > 0) {
+        dayTbody.innerHTML = usage.by_day.map(d => `
+          <tr>
+            <td class="mono">${d.date}</td>
+            <td style="text-align:right;"><strong>${d.credits}</strong></td>
+          </tr>
+        `).join('');
+      } else {
+        dayTbody.innerHTML = '<tr><td colspan="2" style="color:var(--text-muted);">No daily usage in this period.</td></tr>';
+      }
+    }
+
+    // --- TEAM MANAGEMENT ---
+    async function loadTeam() {
+      try {
+        const res = await req('/dashboard/team');
+        const tbody = document.getElementById('teamTableBody');
+        if (!res.data || res.data.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="3" style="color:var(--text-muted);">No team members found.</td></tr>';
+          return;
+        }
+
+        tbody.innerHTML = res.data.map(m => `
+          <tr>
+            <td style="font-size:0.85rem;">${m.email}</td>
+            <td>
+              <span class="tag" style="background:${m.role === 'owner' ? '#581c87' : (m.role === 'developer' ? '#1e3a8a' : '#14532d')}; color:#fff;">
+                ${m.role.toUpperCase()}
+              </span>
+            </td>
+            <td>
+              ${m.role !== 'owner' ? `
+                <button class="btn btn-danger" style="padding:0.15rem 0.4rem; font-size:0.7rem;" onclick="removeMember('${m.id}')">Remove</button>
+              ` : '<span style="color:var(--text-muted); font-size:0.75rem;">Owner</span>'}
+            </td>
+          </tr>
+        `).join('');
+      } catch (e) {}
+    }
+
+    function openAddMemberModal() {
+      document.getElementById('teamMemberEmail').value = '';
+      document.getElementById('teamModalOverlay').style.display = 'flex';
+    }
+
+    function closeAddMemberModal() {
+      document.getElementById('teamModalOverlay').style.display = 'none';
+    }
+
+    async function submitAddMember() {
+      const email = document.getElementById('teamMemberEmail').value;
+      const role = document.getElementById('teamMemberRole').value;
+      closeAddMemberModal();
+
+      try {
+        await req('/dashboard/team', {
+          method: 'POST',
+          body: JSON.stringify({ email, role })
+        });
+        await loadTeam();
+        await loadAudit();
+        showToast('Member Added', `Invited ${email} as ${role.toUpperCase()}`, '👥');
+      } catch (e) {
+        alert(e.message);
+      }
+    }
+
+    async function removeMember(memberId) {
+      if (!confirm("Are you sure you want to remove this team member?")) return;
+      try {
+        await req(`/dashboard/team/${memberId}`, { method: 'DELETE' });
+        await loadTeam();
+        await loadAudit();
+        showToast('Member Removed', 'Team member removed from account', '🗑️');
+      } catch (e) {
+        alert(e.message);
+      }
+    }
+
+    function formatRelativeTime(dateStr) {
+      if (!dateStr) return '<span style="color:var(--text-muted)">Never</span>';
+      const d = new Date(dateStr);
+      const diffSec = Math.floor((Date.now() - d.getTime()) / 1000);
+      if (diffSec < 60) return '<span style="color:var(--success)">Just now</span>';
+      if (diffSec < 3600) return `${Math.floor(diffSec / 60)}m ago`;
+      if (diffSec < 86400) return `${Math.floor(diffSec / 3600)}h ago`;
+      return d.toLocaleDateString();
+    }
+
+    async function loadKeys() {
+      const res = await req('/dashboard/keys');
+      availableKeys = res.data;
+      const tbody = document.getElementById('keysTableBody');
+      const select = document.getElementById('activeKeySelect');
+      select.innerHTML = '';
+
+      if (availableKeys.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7" style="color: var(--text-muted);">No keys found. Click "+ New Key" to create one.</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = availableKeys.map(k => {
+        const scopesList = Array.isArray(k.scopes) ? k.scopes : [];
+        const scopesBadges = scopesList.map(s => {
+          const short = s.replace('generations:', '');
+          return `<span style="background:#1e293b;border:1px solid #334155;color:#93c5fd;font-size:0.7rem;padding:1px 5px;border-radius:4px;margin-right:2px;">${short}</span>`;
+        }).join('');
+
+        return `
+          <tr>
+            <td class="mono"><strong>${k.key_prefix}...</strong></td>
+            <td><span class="tag tag-${k.mode}">${k.mode.toUpperCase()}</span></td>
+            <td>${scopesBadges || '<span style="color:var(--text-muted)">none</span>'}</td>
+            <td style="color:var(--text-muted); font-size:0.8rem;">${new Date(k.created_at).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</td>
+            <td style="font-size:0.8rem;">${formatRelativeTime(k.last_used_at)}</td>
+            <td>${k.is_revoked ? '<span class="tag tag-revoked">REVOKED</span>' : '<span style="color:var(--success);font-weight:600;">Active</span>'}</td>
+            <td>
+              ${!k.is_revoked ? `
+                <button class="btn btn-secondary" style="padding:0.2rem 0.5rem;font-size:0.75rem" onclick="rotateKey('${k.id}')">Rotate</button>
+                <button class="btn btn-danger" style="padding:0.2rem 0.5rem;font-size:0.75rem" onclick="revokeKey('${k.id}')">Revoke</button>
+              ` : '<span style="color:var(--text-muted);font-size:0.75rem;">Revoked</span>'}
+            </td>
+          </tr>
+        `;
+      }).join('');
+
+      availableKeys.filter(k => !k.is_revoked).forEach(k => {
+        const secret = savedSecretMap[k.id];
+        const opt = document.createElement('option');
+        opt.value = secret || k.key_prefix;
+        opt.dataset.keyId = k.id;
+        opt.innerText = `${k.key_prefix}... (${k.mode.toUpperCase()}) ${secret ? ' [Has Secret]' : ''}`;
+        select.appendChild(opt);
+      });
+    }
+
+    function showToast(title, msg, icon = '⚡', duration = 4000) {
+      const toast = document.getElementById('toastNotification');
+      document.getElementById('toastTitle').innerText = title;
+      document.getElementById('toastMsg').innerText = msg;
+      document.getElementById('toastIcon').innerText = icon;
+      toast.style.display = 'block';
+      setTimeout(() => { toast.style.display = 'none'; }, duration);
+    }
+
+    function openCreateKeyModal() {
+      document.getElementById('modalKeyName').value = '';
+      document.getElementById('keyModalOverlay').style.display = 'flex';
+    }
+
+    function closeKeyModal() {
+      document.getElementById('keyModalOverlay').style.display = 'none';
+    }
+
+    function closeSecretModal() {
+      document.getElementById('secretModalOverlay').style.display = 'none';
+    }
+
+    async function submitCreateKey() {
+      const name = document.getElementById('modalKeyName').value;
+      const mode = document.getElementById('modalKeyMode').value;
+      const scopes = [];
+      if (document.getElementById('scopeWrite').checked) scopes.push('generations:write');
+      if (document.getElementById('scopeRead').checked) scopes.push('generations:read');
+      
+      closeKeyModal();
+
+      try {
+        const res = await req('/dashboard/keys', {
+          method: 'POST',
+          body: JSON.stringify({ name: name || `${mode} key`, mode, scopes })
+        });
+
+        // Show Secret Dialog Popup
+        document.getElementById('modalSecretDisplay').innerText = res.secret;
+        document.getElementById('secretModalOverlay').style.display = 'flex';
+        document.getElementById('copyKeyBtn').innerText = '📋 Copy to Clipboard';
+
+        // Auto-save secret for local testing
+        savedSecretMap[res.key.id] = res.secret;
+        localStorage.setItem('saved_secrets', JSON.stringify(savedSecretMap));
+
+        await loadKeys();
+        await loadAudit();
+        showToast('API Key Created', `${res.key.mode.toUpperCase()} key generated successfully.`, '🔑');
+      } catch (e) {
+        alert(e.message);
+      }
+    }
+
+    function copySecretToClipboard() {
+      const secret = document.getElementById('modalSecretDisplay').innerText;
+      navigator.clipboard.writeText(secret);
+      const btn = document.getElementById('copyKeyBtn');
+      btn.innerText = '✅ Copied!';
+      setTimeout(() => { btn.innerText = '📋 Copy to Clipboard'; }, 2000);
+      showToast('Key Copied', 'Secret key copied to clipboard!', '📋');
+    }
+
+    async function revokeKey(id) {
+      if (!confirm("Are you sure? Revoking takes effect on the very next request.")) return;
+      await req(`/dashboard/keys/${id}/revoke`, { method: 'POST' });
+      await loadKeys();
+      await loadAudit();
+    }
+
+    async function rotateKey(id) {
+      if (!confirm("Rotate this API key? This will generate a new secret and safely retire the old key.")) return;
+      try {
+        const res = await req(`/dashboard/keys/${id}/rotate`, { method: 'POST' });
+
+        // Show the same sleek Secret Modal Dialog Popup
+        document.getElementById('modalSecretDisplay').innerText = res.secret;
+        document.getElementById('secretModalOverlay').style.display = 'flex';
+        document.getElementById('copyKeyBtn').innerText = '📋 Copy Rotated Key';
+
+        // Auto-save secret for local testing
+        savedSecretMap[res.key.id] = res.secret;
+        localStorage.setItem('saved_secrets', JSON.stringify(savedSecretMap));
+
+        await loadKeys();
+        await loadAudit();
+        showToast('Key Rotated', 'Old key retired, new key is active!', '🔄');
+      } catch (e) {
+        alert(e.message);
+      }
+    }
+
+    async function changePlan() {
+      const plan = document.getElementById('planSelector').value;
+      await req('/dashboard/plan', { method: 'POST', body: JSON.stringify({ plan }) });
+      await loadDashboard();
+    }
+
+    async function submitGeneration() {
+      const alert = document.getElementById('genStatusAlert');
+      alert.style.display = 'none';
+
+      const select = document.getElementById('activeKeySelect');
+      const secret = select.value;
+      if (!secret || !secret.startsWith('sk_')) {
+        alert.style.display = 'block';
+        alert.style.color = 'var(--danger)';
+        alert.innerText = "Please create a new API key first so you have its active secret!";
+        return;
+      }
+
+      const prompt = document.getElementById('genPrompt').value;
+      const duration_sec = parseInt(document.getElementById('genDuration').value, 10);
+      const license = document.getElementById('genLicense').value;
+
+      try {
+        const res = await fetch('/v1/generations', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${secret}`,
+          },
+          body: JSON.stringify({ prompt, duration_sec, license, instrumental: true })
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          throw new Error(data.error?.message || 'Generation failed');
+        }
+
+        alert.style.display = 'block';
+        alert.style.color = 'var(--success)';
+        alert.innerText = `Generation created (ID: ${data.id})! Status: ${data.status.toUpperCase()}`;
+
+        showToast('Generation Dispatched', `Job ${data.id} accepted (202). Polling status...`, '🎵');
+
+        await loadGenerations();
+        await loadUsage();
+      } catch (e) {
+        alert.style.display = 'block';
+        alert.style.color = 'var(--danger)';
+        alert.innerText = e.message;
+      }
+    }
+
+    async function loadGenerations() {
+      const select = document.getElementById('activeKeySelect');
+      const secret = select?.value;
+      if (!secret || !secret.startsWith('sk_')) return;
+
+      try {
+        const res = await fetch('/v1/generations', {
+          headers: { 'Authorization': `Bearer ${secret}` }
+        });
+        if (!res.ok) return;
+        const data = await res.json();
+
+        const tbody = document.getElementById('gensTableBody');
+        if (!data.data || data.data.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="5" style="color: var(--text-muted);">No generation jobs yet.</td></tr>';
+          return;
+        }
+
+        tbody.innerHTML = data.data.map(g => `
+          <tr>
+            <td class="mono"><strong>${g.id}</strong></td>
+            <td><span class="tag status-${g.status}">${g.status.toUpperCase()}</span></td>
+            <td><span style="font-size:0.8rem; color:#d1d5db;">${g.license}</span></td>
+            <td><strong>${g.credits_charged}</strong></td>
+            <td>
+              ${g.output?.audio_url ? `
+                <div style="display:flex; align-items:center; gap:0.5rem;">
+                  <audio controls style="height:32px; width:220px; outline:none;">
+                    <source src="${g.output.audio_url}" type="audio/mp3">
+                  </audio>
+                </div>
+              ` : (g.status === 'failed' ? '<span style="color:var(--danger); font-size:0.8rem;">Generation failed</span>' : '<span style="color:var(--warning); font-size:0.8rem;">Rendering audio...</span>')}
+            </td>
+            <td style="color:var(--text-muted); font-size:0.75rem;">${new Date(g.created_at).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit', second:'2-digit'})}</td>
+          </tr>
+        `).join('');
+      } catch (e) {}
+    }
+
+    async function loadAudit() {
+      const res = await req('/dashboard/audit');
+      const tbody = document.getElementById('auditTableBody');
+      if (!res.data || res.data.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="3" style="color: var(--text-muted);">No audit entries yet.</td></tr>';
+        return;
+      }
+      tbody.innerHTML = res.data.slice(0, 8).map(a => `
+        <tr>
+          <td><strong style="color:var(--accent)">${a.action}</strong></td>
+          <td class="mono">${a.resource_type}</td>
+          <td style="color:var(--text-muted);font-size:0.75rem">${new Date(a.created_at).toLocaleTimeString()}</td>
+        </tr>
+      `).join('');
+    }
+
+    // Auto-refresh generations every 2 seconds
+    setInterval(() => {
+      if (token) {
+        loadGenerations();
+        loadUsage();
+      }
+    }, 2000);
+
+    // Initialize Google Auth & GSI
+    initGoogleAuth();
+    window.addEventListener('load', () => {
+      if (window.google?.accounts?.id && googleClientId) {
+        setupGsi();
+      }
+    });
+
+    if (token) loadDashboard();
+  </script>
+</body>
+</html>
+
