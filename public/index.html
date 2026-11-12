@@ -1219,6 +1219,7 @@
     function logout() {
       token = '';
       localStorage.removeItem('soundverse_token');
+      localStorage.removeItem('soundverse_account_id');
       location.reload();
     }
 
@@ -1488,6 +1489,7 @@
 
       if (availableKeys.length === 0) {
         tbody.innerHTML = '<tr><td colspan="7" style="color: var(--text-muted);">No keys found. Click "+ New Key" to create one.</td></tr>';
+        select.innerHTML = '<option value="">No API keys available</option>';
         return;
       }
 
@@ -1516,14 +1518,20 @@
         `;
       }).join('');
 
-      availableKeys.filter(k => !k.is_revoked).forEach(k => {
-        const secret = savedSecretMap[k.id];
-        const opt = document.createElement('option');
-        opt.value = secret || k.key_prefix;
-        opt.dataset.keyId = k.id;
-        opt.innerText = `${k.key_prefix}... (${k.mode.toUpperCase()}) ${secret ? ' [Has Secret]' : ''}`;
-        select.appendChild(opt);
-      });
+      // Populate generation key selector with ACTIVE keys only
+      const activeKeys = availableKeys.filter(k => !k.is_revoked);
+      if (activeKeys.length === 0) {
+        select.innerHTML = '<option value="">No active keys (create or rotate one)</option>';
+      } else {
+        activeKeys.forEach(k => {
+          const secret = savedSecretMap[k.id];
+          const opt = document.createElement('option');
+          opt.value = secret || k.key_prefix;
+          opt.dataset.keyId = k.id;
+          opt.innerText = `${k.key_prefix}... (${k.mode.toUpperCase()})${secret ? ' [Ready to Generate]' : ' [Prefix only - Secret needed]'}`;
+          select.appendChild(opt);
+        });
+      }
     }
 
     function showToast(title, msg, icon = '⚡', duration = 4000) {

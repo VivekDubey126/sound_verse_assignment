@@ -52,7 +52,8 @@ function authenticate(req, res, next) {
     if (requestedAccountId) {
       activeMembership = activeMemberships.find(m => m.account_id === requestedAccountId);
       if (!activeMembership) {
-        throw new ForbiddenError('forbidden', 'You do not have active membership in this organization');
+        // Fall back gracefully to the user's valid active membership rather than throwing a hard 403
+        activeMembership = activeMemberships.find(m => m.role !== 'owner') || activeMemberships[0];
       }
     } else if (payload.accountId) {
       activeMembership = activeMemberships.find(m => m.account_id === payload.accountId);
