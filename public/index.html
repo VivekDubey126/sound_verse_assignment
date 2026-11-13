@@ -687,7 +687,7 @@
         <div class="card">
           <h2>Account & Plan <span class="badge" id="planBadge">Starter</span></h2>
           <div style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 0.5rem;">
-            Email: <strong id="dashEmail" style="color: #fff;">-</strong>
+            Owner: <strong id="dashEmail" style="color: #fff;">-</strong>
           </div>
           <div style="display: flex; gap: 0.5rem; align-items: center; margin-top: 1rem;">
             <select id="planSelector" style="margin-bottom: 0;">
@@ -1321,7 +1321,7 @@
 
         const displayUser = me.account.userEmail || me.account.email;
         document.getElementById('accountEmail').innerHTML = `${displayUser} ${roleBadge}`;
-        document.getElementById('dashEmail').innerHTML = `${me.account.email} ${roleBadge}`;
+        document.getElementById('dashEmail').innerHTML = `<strong>${me.account.email}</strong> <span class="badge" style="background:#7c3aed; color:#fff; font-size:0.7rem; margin-left:4px;">ACCOUNT OWNER</span>`;
         document.getElementById('planBadge').innerText = me.plan.display_name;
         document.getElementById('planSelector').value = me.account.plan;
 
