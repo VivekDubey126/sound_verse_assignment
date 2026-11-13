@@ -1259,12 +1259,14 @@
     function scrollToAuth(mode) {
       const authSection = document.getElementById('authSection');
       if (authSection) {
-        authSection.scrollIntoView({ behavior: 'smooth' });
+        authSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
         const title = document.getElementById('authTitle');
         if (title) {
           title.innerText = mode === 'signup' ? 'Create Your Developer Account' : 'Sign in to Soundverse Developer';
         }
-        document.getElementById('authEmail')?.focus();
+        setTimeout(() => {
+          document.getElementById('authEmail')?.focus();
+        }, 300);
       }
     }
 
