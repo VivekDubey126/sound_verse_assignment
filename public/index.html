@@ -391,6 +391,17 @@
       transition: all 0.2s;
     }
 
+    
+    select option {
+      background-color: #161420 !important;
+      color: #f3f4f6 !important;
+      padding: 8px 12px;
+    }
+
+    select {
+      color-scheme: dark;
+    }
+
     input:focus,
     select:focus,
     textarea:focus {
@@ -1511,13 +1522,13 @@
         if (me.memberships && me.memberships.length > 1) {
           wsContainer.style.display = 'flex';
           wsSelector.innerHTML = me.memberships.map(m => `
-            <option value="${m.accountId}" ${m.accountId === me.account.id ? 'selected' : ''}>
+            <option value="${m.accountId}" ${m.accountId === me.account.id ? 'selected' : ''} style="background:#161420; color:#f3f4f6;">
               ${m.isOwner ? '👑 ' : '🏢 '} ${m.ownerEmail} (${m.role.toUpperCase()})
             </option>
           `).join('');
         } else if (me.memberships && me.memberships.length === 1 && !me.isOwner) {
           wsContainer.style.display = 'flex';
-          wsSelector.innerHTML = `<option value="${me.account.id}" selected>🏢 ${me.account.email} (${(me.role || 'viewer').toUpperCase()})</option>`;
+          wsSelector.innerHTML = `<option value="${me.account.id}" selected style="background:#161420; color:#f3f4f6;">🏢 ${me.account.email} (${(me.role || 'viewer').toUpperCase()})</option>`;
         } else {
           wsContainer.style.display = 'none';
         }
