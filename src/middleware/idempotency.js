@@ -27,6 +27,7 @@ function idempotencyMiddleware(req, res, next) {
       }
 
       if (existing.response_status && existing.response_body) {
+        res.setHeader('Idempotent-Replay', 'true');
         return res.status(existing.response_status).json(JSON.parse(existing.response_body));
       }
     }

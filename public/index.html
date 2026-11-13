@@ -828,6 +828,17 @@
             </div>
           </div>
 
+          <div style="margin-top: -0.25rem; margin-bottom: 0.5rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 0.75rem 0.9rem;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.25rem;">
+              <label style="margin:0; font-size:0.78rem; color:#c4b5fd;">Idempotency-Key Header (Optional Test)</label>
+              <button class="btn btn-secondary" type="button" style="padding:0.1rem 0.45rem; font-size:0.7rem;" onclick="generateRandomIdempotencyKey()">🎲 New Key</button>
+            </div>
+            <input type="text" id="genIdempotencyKey" placeholder="e.g. idem_test_12345 (Leave set to test duplicate retry)" style="margin:0.25rem 0 0 0; font-family:'JetBrains Mono',monospace; font-size:0.8rem;">
+            <div style="font-size:0.72rem; color:var(--text-muted); margin-top:0.35rem;">
+              When populated, clicking generate twice with the exact same key returns the cached job and charges 0 additional credits.
+            </div>
+          </div>
+
           <button id="generateMusicBtn" class="btn btn-cta" style="width: 100%; margin-top: 0.25rem;"
             onclick="submitGeneration()">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:2px;"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
@@ -1680,6 +1691,11 @@
       await loadDashboard();
     }
 
+    function generateRandomIdempotencyKey() {
+      const rand = 'idem_' + Math.random().toString(36).substring(2, 10);
+      document.getElementById('genIdempotencyKey').value = rand;
+    }
+
     async function submitGeneration() {
       const alert = document.getElementById('genStatusAlert');
       alert.style.display = 'none';
@@ -1696,14 +1712,20 @@
       const prompt = document.getElementById('genPrompt').value;
       const duration_sec = parseInt(document.getElementById('genDuration').value, 10);
       const license = document.getElementById('genLicense').value;
+      const idempotencyKey = document.getElementById('genIdempotencyKey').value.trim();
+
+      const headers = {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${secret}`,
+      };
+      if (idempotencyKey) {
+        headers['Idempotency-Key'] = idempotencyKey;
+      }
 
       try {
         const res = await fetch('/v1/generations', {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${secret}`,
-          },
+          headers,
           body: JSON.stringify({ prompt, duration_sec, license, instrumental: true })
         });
         const data = await res.json();
@@ -1711,11 +1733,18 @@
           throw new Error(data.error?.message || 'Generation failed');
         }
 
+        const isReplay = res.headers.get('Idempotent-Replay') === 'true' || res.status === 200;
         alert.style.display = 'block';
-        alert.style.color = 'var(--success)';
-        alert.innerText = `Generation created (ID: ${data.id})! Status: ${data.status.toUpperCase()}`;
+        alert.style.color = isReplay ? '#38bdf8' : 'var(--success)';
+        alert.innerHTML = isReplay 
+          ? `🔁 <strong>Idempotent Replay Detected!</strong> Returning original job (${data.id}). Billed 0 duplicate credits!`
+          : `Generation created (ID: ${data.id})! Status: ${data.status.toUpperCase()}`;
 
-        showToast('Generation Dispatched', `Job ${data.id} accepted (202). Polling status...`, '🎵');
+        showToast(
+          isReplay ? 'Idempotent Replay' : 'Generation Dispatched', 
+          isReplay ? `Returned existing Job ${data.id} without billing twice.` : `Job ${data.id} accepted (202). Polling status...`, 
+          isReplay ? '🔁' : '🎵'
+        );
 
         await loadGenerations();
         await loadUsage();
