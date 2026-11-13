@@ -1744,8 +1744,9 @@
           return;
         }
 
-        tbody.innerHTML = data.data.map(g => `
-          <tr>
+        // Only update tbody if rows or statuses actually changed, so active audio playback isn't reloaded every 2s
+        const newHtml = data.data.map(g => `
+          <tr data-gen-id="${g.id}">
             <td class="mono"><strong>${g.id}</strong></td>
             <td><span class="tag status-${g.status}">${g.status.toUpperCase()}</span></td>
             <td><span style="font-size:0.8rem; color:#d1d5db;">${g.license}</span></td>
@@ -1753,8 +1754,8 @@
             <td>
               ${g.output?.audio_url ? `
                 <div style="display:flex; align-items:center; gap:0.5rem;">
-                  <audio controls style="height:32px; width:220px; outline:none;">
-                    <source src="${g.output.audio_url}" type="audio/mp3">
+                  <audio controls preload="metadata" style="height:32px; width:220px; outline:none;" id="audio_${g.id}">
+                    <source src="${g.output.audio_url}" type="audio/mpeg">
                   </audio>
                 </div>
               ` : (g.status === 'failed' ? '<span style="color:var(--danger); font-size:0.8rem;">Generation failed</span>' : '<span style="color:var(--warning); font-size:0.8rem;">Rendering audio...</span>')}
@@ -1762,6 +1763,12 @@
             <td style="color:var(--text-muted); font-size:0.75rem;">${new Date(g.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}</td>
           </tr>
         `).join('');
+
+        // Avoid re-rendering DOM if user is actively playing audio
+        const isAudioPlaying = Array.from(tbody.querySelectorAll('audio')).some(a => !a.paused);
+        if (!isAudioPlaying) {
+          tbody.innerHTML = newHtml;
+        }
       } catch (e) { }
     }
 
