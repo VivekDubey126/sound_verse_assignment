@@ -140,7 +140,11 @@ v1Router.get('/audio/:filename', (req, res, next) => {
       throw new NotFoundError('Audio file');
     }
 
-    res.setHeader('Content-Type', 'audio/mpeg');
+    // Determine correct MIME type from extension or file header
+    const ext = path.extname(filename).toLowerCase();
+    const contentType = ext === '.wav' ? 'audio/wav' : (ext === '.flac' ? 'audio/flac' : 'audio/mpeg');
+    res.setHeader('Content-Type', contentType);
+    res.setHeader('Accept-Ranges', 'bytes');
     res.sendFile(filePath);
   } catch (err) {
     next(err);

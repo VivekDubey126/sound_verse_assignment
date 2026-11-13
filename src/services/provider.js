@@ -5,8 +5,8 @@ const http = require('http');
 const { config } = require('../config');
 
 /**
- * Creates a minimal valid MP3 buffer (silent audio) for mock/test generation.
- * This is a real, valid, playable MP3 file.
+ * Creates an audible melodic audio buffer (synthesized acoustic arpeggio track)
+ * for mock/test generation so the audio is genuinely audible when played.
  */
 function createSilentMp3(storageDir, prefix = 'audio', durationSec = 30) {
   if (!fs.existsSync(storageDir)) {
@@ -16,21 +16,49 @@ function createSilentMp3(storageDir, prefix = 'audio', durationSec = 30) {
   const filename = `${prefix}_${Date.now()}_${Math.random().toString(36).substring(7)}.mp3`;
   const fullPath = path.join(storageDir, filename);
 
-  // Build a valid LAME-encoded silent MP3 frame sequence
-  // Each frame = 144 * bitrate / sampleRate bytes = 144 * 128000 / 44100 ≈ 417 bytes
-  // For 30s at 44100Hz: ~30 * (44100/1152) ≈ 1150 frames
-  const frameCount = Math.max(1, Math.ceil((durationSec * 44100) / 1152));
-  const frameSize = 417;
-  const buf = Buffer.alloc(frameCount * frameSize);
+  const sampleRate = 44100;
+  const numSamples = Math.floor(sampleRate * (durationSec || 30));
+  const dataSize = numSamples * 2;
+  const totalSize = 44 + dataSize;
+  const buf = Buffer.alloc(totalSize);
 
-  for (let i = 0; i < frameCount; i++) {
-    const offset = i * frameSize;
-    // MP3 sync word + MPEG1, Layer3, 128kbps, 44100Hz, Stereo
-    buf[offset + 0] = 0xFF;
-    buf[offset + 1] = 0xFB;
-    buf[offset + 2] = 0x90;
-    buf[offset + 3] = 0x00;
-    // Rest of frame is zero-padded (silent PCM)
+  // WAV container compatible with standard audio elements
+  buf.write('RIFF', 0);
+  buf.writeUInt32LE(totalSize - 8, 4);
+  buf.write('WAVE', 8);
+  buf.write('fmt ', 12);
+  buf.writeUInt32LE(16, 16);
+  buf.writeUInt16LE(1, 20); // PCM
+  buf.writeUInt16LE(1, 22); // Mono
+  buf.writeUInt32LE(sampleRate, 24);
+  buf.writeUInt32LE(sampleRate * 2, 28);
+  buf.writeUInt16LE(2, 32);
+  buf.writeUInt16LE(16, 34);
+  buf.write('data', 36);
+  buf.writeUInt32LE(dataSize, 40);
+
+  // Pleasant harmonic acoustic chord progression (C -> Am -> F -> G)
+  const chordProgression = [
+    [261.63, 329.63, 392.00], // C
+    [220.00, 261.63, 329.63], // Am
+    [174.61, 220.00, 261.63], // F
+    [196.00, 246.94, 293.66], // G
+  ];
+
+  for (let i = 0; i < numSamples; i++) {
+    const t = i / sampleRate;
+    const chordIdx = Math.floor(t / 2) % chordProgression.length;
+    const chord = chordProgression[chordIdx];
+    const noteIdx = Math.floor(t * 4) % chord.length;
+    const freq = chord[noteIdx];
+    const noteTime = (t * 4) % 1.0;
+    const env = Math.exp(-noteTime * 4.0); // Acoustic pluck envelope
+    // Rich harmonic timbre
+    const wave = Math.sin(2 * Math.PI * freq * t) * 0.5 +
+                 Math.sin(4 * Math.PI * freq * t) * 0.25 +
+                 Math.sin(6 * Math.PI * freq * t) * 0.12;
+    const sample = Math.max(-1, Math.min(1, wave * env * 0.65));
+    buf.writeInt16LE(Math.floor(sample * 32767), 44 + i * 2);
   }
 
   fs.writeFileSync(fullPath, buf);
