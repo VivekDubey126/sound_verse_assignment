@@ -1755,6 +1755,8 @@
       }
     }
 
+    let lastGensHash = '';
+
     async function loadGenerations() {
       const select = document.getElementById('activeKeySelect');
       const secret = select?.value;
@@ -1769,12 +1771,29 @@
 
         const tbody = document.getElementById('gensTableBody');
         if (!data.data || data.data.length === 0) {
-          tbody.innerHTML = '<tr><td colspan="5" style="color: var(--text-muted);">No generation jobs yet.</td></tr>';
+          if (tbody.innerHTML.indexOf('No generation jobs') === -1) {
+            tbody.innerHTML = '<tr><td colspan="6" style="color: var(--text-muted); text-align:center; padding:1.5rem;">No generation jobs yet. Trigger one above!</td></tr>';
+          }
+          lastGensHash = '';
           return;
         }
 
-        // Only update tbody if rows or statuses actually changed, so active audio playback isn't reloaded every 2s
-        const newHtml = data.data.map(g => `
+        // Compute a fingerprint of the generation data (ids + statuses + URLs)
+        const currentHash = data.data.map(g => `${g.id}:${g.status}:${g.output?.audio_url || ''}`).join('|');
+        if (currentHash === lastGensHash) {
+          // Nothing changed! Do NOT wipe or touch the DOM, preserving the open 3-dots menu & audio state.
+          return;
+        }
+        lastGensHash = currentHash;
+
+        // If audio is actively playing or an element inside tbody has user focus, defer refresh
+        const isAudioPlaying = Array.from(tbody.querySelectorAll('audio')).some(a => !a.paused);
+        const hasFocus = tbody.contains(document.activeElement);
+        if (isAudioPlaying || hasFocus) {
+          return;
+        }
+
+        tbody.innerHTML = data.data.map(g => `
           <tr data-gen-id="${g.id}">
             <td class="mono"><strong>${g.id}</strong></td>
             <td><span class="tag status-${g.status}">${g.status.toUpperCase()}</span></td>
@@ -1782,22 +1801,20 @@
             <td><strong>${g.credits_charged}</strong></td>
             <td>
               ${g.output?.audio_url ? `
-                <div style="display:flex; align-items:center; gap:0.5rem;">
+                <div style="display:flex; align-items:center; gap:0.6rem;">
                   <audio controls preload="metadata" style="height:32px; width:220px; outline:none;" id="audio_${g.id}">
                     <source src="${g.output.audio_url}" type="audio/mpeg">
                   </audio>
+                  <a href="${g.output.audio_url}" download="${g.id}.mp3" class="btn btn-secondary" style="padding:0.25rem 0.55rem; font-size:0.75rem; text-decoration:none; display:inline-flex; align-items:center; gap:0.3rem;" title="Direct Download MP3">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                    <span>MP3</span>
+                  </a>
                 </div>
               ` : (g.status === 'failed' ? '<span style="color:var(--danger); font-size:0.8rem;">Generation failed</span>' : '<span style="color:var(--warning); font-size:0.8rem;">Rendering audio...</span>')}
             </td>
             <td style="color:var(--text-muted); font-size:0.75rem;">${new Date(g.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}</td>
           </tr>
         `).join('');
-
-        // Avoid re-rendering DOM if user is actively playing audio
-        const isAudioPlaying = Array.from(tbody.querySelectorAll('audio')).some(a => !a.paused);
-        if (!isAudioPlaying) {
-          tbody.innerHTML = newHtml;
-        }
       } catch (e) { }
     }
 
