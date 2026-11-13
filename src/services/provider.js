@@ -487,14 +487,115 @@ class HuggingFaceMusicProvider {
 
 /**
  * ============================================================
+ * ELEVENLABS MUSIC & SOUND PROVIDER
+ * ============================================================
+ * Uses ElevenLabs Sound Generation API for realistic audio synthesis.
+ * Output: 44.1kHz MP3 file with genuine sound synthesis.
+ */
+class ElevenLabsMusicProvider {
+  constructor() {
+    this.name = 'elevenlabs/sound-generation-v1';
+    this.apiKey = process.env.ELEVENLABS_API_KEY;
+    this.timeoutMs = 60000;
+  }
+
+  async generate(req) {
+    if (!this.apiKey) {
+      throw new Error('ELEVENLABS_API_KEY environment variable is not set');
+    }
+
+    const promptText = req.prompt || 'Uplifting acoustic guitar melody with warm reverb';
+    const durationSec = Math.min(Math.max(req.durationSec || 10, 1), 22); // ElevenLabs Sound max is ~22s
+
+    console.log(`[ElevenLabs] Generating audio: prompt="${promptText.slice(0, 70)}", duration=${durationSec}s`);
+
+    return new Promise((resolve, reject) => {
+      const payload = JSON.stringify({
+        text: promptText,
+        duration_seconds: durationSec,
+        prompt_influence: 0.35,
+      });
+
+      const options = {
+        hostname: 'api.elevenlabs.io',
+        path: '/v1/sound-generation',
+        method: 'POST',
+        headers: {
+          'xi-api-key': this.apiKey,
+          'Content-Type': 'application/json',
+          'Accept': 'audio/mpeg',
+          'Content-Length': Buffer.byteLength(payload),
+        },
+      };
+
+      const timer = setTimeout(() => {
+        request.destroy();
+        reject(new Error('ElevenLabs API request timed out after 60s'));
+      }, this.timeoutMs);
+
+      const request = https.request(options, (res) => {
+        if (res.statusCode >= 400) {
+          let errData = '';
+          res.on('data', chunk => errData += chunk);
+          res.on('end', () => {
+            clearTimeout(timer);
+            reject(new Error(`ElevenLabs API returned ${res.statusCode}: ${errData}`));
+          });
+          return;
+        }
+
+        if (!fs.existsSync(config.storageDir)) {
+          fs.mkdirSync(config.storageDir, { recursive: true });
+        }
+
+        const filename = `eleven_${Date.now()}_${Math.random().toString(36).substring(7)}.mp3`;
+        const audioPath = path.join(config.storageDir, filename);
+        const fileStream = fs.createWriteStream(audioPath);
+
+        res.pipe(fileStream);
+
+        fileStream.on('finish', () => {
+          clearTimeout(timer);
+          fileStream.close();
+          console.log(`[ElevenLabs] Audio saved successfully: ${audioPath}`);
+          resolve({
+            audioPath,
+            durationSec: req.durationSec,
+            format: 'mp3',
+            model: this.name,
+          });
+        });
+
+        fileStream.on('error', (err) => {
+          clearTimeout(timer);
+          fs.unlink(audioPath, () => {});
+          reject(err);
+        });
+      });
+
+      request.on('error', (err) => {
+        clearTimeout(timer);
+        reject(err);
+      });
+
+      request.write(payload);
+      request.end();
+    });
+  }
+}
+
+/**
+ * ============================================================
  * PRIMARY MUSIC PROVIDER — wraps the configured real API
  * ============================================================
  */
 class PrimaryMusicProvider {
   constructor() {
-    const provider = process.env.MUSIC_PROVIDER || 'mock';
+    const provider = process.env.MUSIC_PROVIDER || 'elevenlabs';
 
-    if (provider === 'lyria' || provider === 'gemini') {
+    if (provider === 'elevenlabs') {
+      this._impl = new ElevenLabsMusicProvider();
+    } else if (provider === 'lyria' || provider === 'gemini') {
       this._impl = new GoogleLyriaProvider();
     } else if (provider === 'minimax' || provider === 'fal') {
       this._impl = new FalMiniMaxProvider();
@@ -503,14 +604,16 @@ class PrimaryMusicProvider {
     } else if (provider === 'replicate') {
       this._impl = new ReplicateMusicProvider();
     } else {
-      // Auto-detect: Replicate > HuggingFace > Lyria
-      this._impl = process.env.REPLICATE_API_TOKEN
-        ? new ReplicateMusicProvider()
-        : process.env.HF_TOKEN
-          ? new HuggingFaceMusicProvider()
-          : process.env.GEMINI_API_KEY
-            ? new GoogleLyriaProvider()
-            : null;
+      // Auto-detect: ElevenLabs > Replicate > HuggingFace > Lyria
+      this._impl = process.env.ELEVENLABS_API_KEY
+        ? new ElevenLabsMusicProvider()
+        : process.env.REPLICATE_API_TOKEN
+          ? new ReplicateMusicProvider()
+          : process.env.HF_TOKEN
+            ? new HuggingFaceMusicProvider()
+            : process.env.GEMINI_API_KEY
+              ? new GoogleLyriaProvider()
+              : null;
     }
 
     this.name = this._impl ? this._impl.name : 'mock/primary-fallback';
@@ -618,6 +721,7 @@ function getProvider(isTestKey) {
 }
 
 module.exports = {
+  ElevenLabsMusicProvider,
   PrimaryMusicProvider,
   BackupMusicProvider,
   ResilientMusicProvider,

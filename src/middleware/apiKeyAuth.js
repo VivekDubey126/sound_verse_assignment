@@ -28,7 +28,6 @@ function apiKeyAuth(...requiredScopes) {
           throw new ForbiddenError('insufficient_scope', `API key lacks scope: ${s}`);
         }
       }
-
       const account = db.prepare('SELECT * FROM accounts WHERE id = ?').get(apiKey.account_id);
       if (!account) throw new AuthenticationError('Account not found');
 
@@ -38,7 +37,7 @@ function apiKeyAuth(...requiredScopes) {
       // Update last_used_at timestamp on every valid request
       try {
         db.prepare('UPDATE api_keys SET last_used_at = ? WHERE id = ?').run(new Date().toISOString(), apiKey.id);
-      } catch {}
+      } catch { }
 
       req.auth = { accountId: account.id, account, plan };
       req.apiKeyCtx = {
