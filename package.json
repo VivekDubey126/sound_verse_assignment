@@ -2,7 +2,7 @@
   "name": "soundverse-enterprise-api",
   "version": "1.0.0",
   "description": "Self-serve developer API for AI music generation — Soundverse Enterprise Platform",
-  "main": "dist/index.js",
+  "main": "src/index.js",
   "scripts": {
     "start": "node src/index.js",
     "dev": "node --watch src/index.js",
