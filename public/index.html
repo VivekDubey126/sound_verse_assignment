@@ -10,7 +10,6 @@
   <link rel="stylesheet"
     href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Manrope:wght@400;500;600;700;800&family=Bricolage+Grotesque:opsz,wght@12..96,600;700;800&family=Poppins:wght@600;700&family=JetBrains+Mono:wght@400;500&display=swap">
   <script src="https://accounts.google.com/gsi/client" async defer></script>
-
   <style>
     :root {
       --bg: #07060c;
@@ -684,9 +683,41 @@
       </div>
     </div>
 
+    <!-- GOOGLE AUTH POPUP / DIALOG -->
+    <div id="googleAuthModalOverlay"
+      style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.85); backdrop-filter:blur(24px); -webkit-backdrop-filter:blur(24px); z-index:115; justify-content:center; align-items:center;">
+      <div class="card"
+        style="width:100%; max-width:460px; background: linear-gradient(135deg, rgba(255, 255, 255, 0.09) 0%, rgba(255, 255, 255, 0.02) 100%), rgba(14, 12, 20, 0.8); backdrop-filter: blur(36px); -webkit-backdrop-filter: blur(36px); border: 1px solid rgba(66, 133, 244, 0.35); border-top: 1px solid rgba(255, 255, 255, 0.32); border-left: 1px solid rgba(255, 255, 255, 0.24); border-radius: 26px; box-shadow: 0 30px 80px -15px rgba(0, 0, 0, 0.9), 0 0 50px -10px rgba(66, 133, 244, 0.25); padding: 2.25rem;">
+        <h2
+          style="display:flex; align-items:center; gap:0.6rem; margin-bottom:0.75rem; font-family:'Bricolage Grotesque', sans-serif; font-size:1.35rem;">
+          <svg width="22" height="22" viewBox="0 0 18 18">
+            <path fill="#4285F4"
+              d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.874 2.684-6.616z" />
+            <path fill="#34A853"
+              d="M9 18c2.43 0 4.467-.806 5.956-2.184l-2.908-2.258c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z" />
+            <path fill="#FBBC05"
+              d="M3.964 10.707c-.18-.54-.282-1.117-.282-1.707s.102-1.167.282-1.707V4.961H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.039l3.007-2.332z" />
+            <path fill="#EA4335"
+              d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.961L3.964 7.293C4.672 5.166 6.656 3.58 9 3.58z" />
+          </svg>
+          Sign in with Google
+        </h2>
+        <p style="font-size:0.86rem; color:var(--text-muted); margin-bottom:1.25rem; line-height:1.45;">
+          Sign in securely using your Google account. Connects your developer identity directly.
+        </p>
 
+        <label>Google Account Email</label>
+        <input type="email" id="googleDevEmail" placeholder="developer@gmail.com" >
 
+        <label>Display Name (optional)</label>
+        <input type="text" id="googleDevName" placeholder="Developer Name" >
 
+        <div style="display:flex; justify-content:flex-end; gap:0.75rem; margin-top:1rem;">
+          <button class="btn btn-secondary" onclick="closeGoogleModal()">Cancel</button>
+          <button class="btn btn-cta" onclick="submitGoogleDevAuth()">Sign In</button>
+        </div>
+      </div>
+    </div>
 
     <!-- TOAST NOTIFICATION -->
     <div id="toastNotification"
@@ -720,11 +751,11 @@
         Developer Sign Up / Login</h2>
 
       <!-- GOOGLE ONE-TAP / GSI OFFICIAL BUTTON CONTAINER -->
-      <div id="g_id_signin_container" style="display: flex; justify-content: center; margin-bottom: 0.75rem; min-height: 44px;"></div>
+      <div id="g_id_signin_container" style="display: none; justify-content: center; margin-bottom: 0.75rem;"></div>
 
-      <!-- GOOGLE SIGN IN BUTTON (SOUNDVERSE WHITE PILL STYLE - BACKUP) -->
+      <!-- GOOGLE SIGN IN BUTTON (SOUNDVERSE WHITE PILL STYLE) -->
       <button id="customGoogleBtn" type="button" onclick="handleGoogleAuth()"
-        style="width: 100%; display: none; align-items: center; justify-content: center; gap: 10px; background: #ffffff; color: #0b0f19; border: none; border-radius: 9999px; padding: 0.75rem 1rem; font-weight: 700; font-size: 0.92rem; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 4px 15px rgba(255, 255, 255, 0.2);">
+        style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px; background: #ffffff; color: #0b0f19; border: none; border-radius: 9999px; padding: 0.75rem 1rem; font-weight: 700; font-size: 0.92rem; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 4px 15px rgba(255, 255, 255, 0.2);">
         <svg width="18" height="18" viewBox="0 0 18 18">
           <path fill="#4285F4"
             d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.874 2.684-6.616z" />
@@ -740,7 +771,7 @@
 
       <!-- OR DIVIDER -->
       <div
-        style="display: flex; align-items: center; margin: 1.25rem 0; color: var(--text-muted); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em;">
+        style="display: flex; align-items: center; margin: 1.4rem 0; color: var(--text-muted); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em;">
         <div style="flex: 1; height: 1px; background: rgba(255, 255, 255, 0.08);"></div>
         <span style="padding: 0 0.85rem;">or continue with email</span>
         <div style="flex: 1; height: 1px; background: rgba(255, 255, 255, 0.08);"></div>
@@ -1073,9 +1104,10 @@
       style="max-width:1240px; margin:0 auto; display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:2.5rem; margin-bottom:2.5rem;">
       <!-- BRAND & SUMMARY -->
       <div>
-        <div style="display:inline-flex; align-items:center; gap:0.6rem; margin-bottom:1rem;">
-          <span class="logo-sunburst" style="width:26px; height:26px;"></span>
-          <span class="logo">soundverse</span>
+        <div style="display:inline-flex; align-items:center; gap:0.5rem; margin-bottom:1rem;">
+          <span class="logo-sunburst" style="width:18px; height:18px;"></span>
+          <span
+            style="font-family:'Bricolage Grotesque', sans-serif; font-size:1.15rem; font-weight:800; color:#fff; letter-spacing:-0.02em;">soundverse</span>
         </div>
         <p style="font-size:0.82rem; line-height:1.6; color:#94a3b8; max-width:280px;">
           The agent-native music studio. Enterprise REST API for high-fidelity music generation, audio stems, and rights
@@ -1203,16 +1235,16 @@
   </div>
 
   <script>
-    // --- SOUNDVERSE DOT-RING LOGO MARK (palette: #ff7a2d, #ec4899, #d946ef, #7c5cff) ---
+    
     function renderSoundverseMark() {
       const stops = [
-        [0, [255, 122, 45]],  // #ff7a2d orange
-        [90, [236, 72, 153]],  // #ec4899 pink
-        [160, [124, 92, 255]],  // #7c5cff purple
-        [215, [217, 70, 239]],  // #d946ef magenta
-        [280, [236, 72, 153]],  // #ec4899 pink
-        [330, [255, 122, 45]],  // #ff7a2d orange
-        [360, [255, 122, 45]]
+        [0,   [255,122,45]],  // #ff7a2d orange
+        [90,  [236,72,153]],  // #ec4899 pink
+        [160, [124,92,255]],  // #7c5cff purple
+        [215, [217,70,239]],  // #d946ef magenta
+        [280, [236,72,153]],  // #ec4899 pink
+        [330, [255,122,45]],  // #ff7a2d orange
+        [360, [255,122,45]]
       ];
       const colorAt = (deg) => {
         for (let i = 0; i < stops.length - 1; i++) {
@@ -1225,7 +1257,7 @@
         return '#ff7a2d';
       };
       const rings = [
-        { r: 10, n: 24, d: 1.5 },
+        { r: 10,  n: 24, d: 1.5 },
         { r: 6.8, n: 16, d: 1.05 },
         { r: 3.9, n: 10, d: 0.65 }
       ];
@@ -1281,18 +1313,11 @@
               clearInterval(checkGsi);
             } else if (attempts > 30) {
               clearInterval(checkGsi);
-              const customBtn = document.getElementById('customGoogleBtn');
-              if (customBtn) customBtn.style.display = 'flex';
             }
           }, 200);
-        } else {
-          const customBtn = document.getElementById('customGoogleBtn');
-          if (customBtn) customBtn.style.display = 'flex';
         }
       } catch (e) {
         console.warn('Could not fetch auth config:', e.message);
-        const customBtn = document.getElementById('customGoogleBtn');
-        if (customBtn) customBtn.style.display = 'flex';
       }
     }
 
@@ -1317,14 +1342,12 @@
             size: 'large',
             width: 380,
             text: 'continue_with',
-            shape: 'pill',
+            shape: 'rectangular',
           });
         }
         gsiInitialized = true;
       } catch (err) {
         console.warn('Google GSI init error:', err);
-        const customBtn = document.getElementById('customGoogleBtn');
-        if (customBtn) customBtn.style.display = 'flex';
       }
     }
 
@@ -1350,7 +1373,7 @@
       }
     }
 
-        function handleGoogleAuth() {
+    function handleGoogleAuth() {
       const gBtn = document.querySelector('#g_id_signin_container [role="button"]') ||
                    document.querySelector('#g_id_signin_container iframe');
       if (gBtn) {
@@ -1358,7 +1381,49 @@
         return;
       }
       if (googleClientId && window.google?.accounts?.id) {
-        google.accounts.id.prompt();
+        google.accounts.id.prompt((notification) => {
+          if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
+            console.log('Google GSI One Tap prompt skipped or not displayed, showing Google sign-in modal:', notification.getNotDisplayedReason?.());
+            document.getElementById('googleAuthModalOverlay').style.display = 'flex';
+          }
+        });
+      } else {
+        document.getElementById('googleAuthModalOverlay').style.display = 'flex';
+      }
+    }
+
+    function closeGoogleModal() {
+      document.getElementById('googleAuthModalOverlay').style.display = 'none';
+    }
+
+    async function submitGoogleDevAuth() {
+      const email = document.getElementById('googleDevEmail').value.trim();
+      const name = document.getElementById('googleDevName').value.trim();
+      const alert = document.getElementById('authAlert');
+      if (!email) {
+        alert.style.display = 'block';
+        alert.style.color = 'var(--danger)';
+        alert.innerText = 'Please enter a valid Google account email';
+        return;
+      }
+
+      closeGoogleModal();
+      try {
+        const res = await req('/auth/google', {
+          method: 'POST',
+          body: JSON.stringify({
+            email,
+            name,
+            googleId: 'google_' + Math.random().toString(36).substring(2, 10),
+          }),
+        });
+        token = res.token;
+        localStorage.setItem('soundverse_token', token);
+        await loadDashboard();
+      } catch (e) {
+        alert.style.display = 'block';
+        alert.style.color = 'var(--danger)';
+        alert.innerText = e.message;
       }
     }
 
@@ -1977,8 +2042,6 @@
         loadUsage();
       }
     }, 2000);
-
-
 
     // Initialize Google Auth & GSI
     initGoogleAuth();
