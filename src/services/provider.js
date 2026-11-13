@@ -504,7 +504,12 @@ class ElevenLabsMusicProvider {
       throw new Error('ELEVENLABS_API_KEY environment variable is not set');
     }
 
-    const promptText = req.prompt || 'Uplifting acoustic guitar melody with warm reverb';
+    let rawPrompt = req.prompt || 'Uplifting acoustic guitar melody with warm reverb';
+    // ElevenLabs sound-generation requires text length <= 450 characters
+    if (rawPrompt.length > 440) {
+      rawPrompt = rawPrompt.slice(0, 437) + '...';
+    }
+    const promptText = rawPrompt;
     const durationSec = Math.min(Math.max(req.durationSec || 10, 1), 22); // ElevenLabs Sound max is ~22s
 
     console.log(`[ElevenLabs] Generating audio: prompt="${promptText.slice(0, 70)}", duration=${durationSec}s`);
