@@ -1280,6 +1280,9 @@
         document.getElementById('dashboardSection').style.display = 'block';
         document.getElementById('logoutBtn').style.display = 'block';
 
+        // Scroll immediately to the top so dashboard opens from the very top
+        window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+
         const unauthActions = document.getElementById('unauthHeaderActions');
         if (unauthActions) unauthActions.style.display = 'none';
 
