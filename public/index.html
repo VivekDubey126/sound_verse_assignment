@@ -1216,15 +1216,10 @@
       const password = document.getElementById('authPassword').value;
       const alert = document.getElementById('authAlert');
       try {
-        const res = await req('/auth/signup', { method: 'POST', body: JSON.stringify({ email, password }) });
+        await req('/auth/signup', { method: 'POST', body: JSON.stringify({ email, password }) });
         alert.style.display = 'block';
         alert.style.color = 'var(--success)';
-        alert.innerHTML = `Signup successful! Email verified automatically in dev. Logging in...`;
-        // Auto-verify in development for quick test
-        if (res.verification_link) {
-          const urlObj = new URL(res.verification_link);
-          await fetch(urlObj.pathname + urlObj.search);
-        }
+        alert.innerHTML = `Account created! Logging in...`;
         await handleLogin();
       } catch (e) {
         alert.style.display = 'block';

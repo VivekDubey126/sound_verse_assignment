@@ -17,17 +17,13 @@ authRouter.post('/signup', async (req, res, next) => {
     if (!email || !password) throw new BadRequestError('missing_fields', 'Email and password required');
 
     const { account, verificationToken } = await createAccount(email, password);
-    const verifyUrl = `${req.protocol}://${req.get('host')}/auth/verify?token=${verificationToken}`;
 
-    console.log(`\n======================================================`);
-    console.log(`✉️  EMAIL VERIFICATION LINK FOR [${email}]:`);
-    console.log(`👉 ${verifyUrl}`);
-    console.log(`======================================================\n`);
+    // Auto-verify email immediately (no real email system in this environment)
+    await verifyEmail(verificationToken);
 
     res.status(201).json({
-      message: 'Account created. Please verify your email using the link sent/logged.',
-      account: { id: account.id, email: account.email, plan: account.plan_name },
-      verification_link: verifyUrl,
+      message: 'Account created successfully.',
+      account: { id: account.id, email: account.email },
     });
   } catch (err) {
     next(err);
