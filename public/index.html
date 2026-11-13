@@ -1056,6 +1056,45 @@
         </div>
       </div>
 
+      
+      <!-- ROW: WEBHOOK MANAGEMENT -->
+      <div class="card" style="margin-top: 1.5rem;">
+        <h2>
+          <span>🔗 Webhook Endpoints & SSRF Protection</span>
+          <span style="font-size:0.75rem; color:var(--text-muted); font-weight:normal;">Real-time event delivery</span>
+        </h2>
+        <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:1rem;">
+          Register an HTTP endpoint to receive HMAC-SHA256 signed event payloads for <code>job.completed</code> and <code>job.failed</code>.
+        </p>
+
+        <div style="display:flex; gap:0.5rem; margin-bottom:1rem; align-items:flex-start;">
+          <div style="flex:1;">
+            <input type="url" id="webhookUrlInput" placeholder="https://your-domain.com/webhooks" style="margin:0; padding:0.65rem 0.9rem; font-size:0.85rem;" />
+            <div id="webhookAlert" style="display:none; font-size:0.8rem; margin-top:0.4rem;"></div>
+          </div>
+          <button class="btn btn-cta" onclick="registerDashboardWebhook()" style="padding:0.65rem 1.25rem; font-size:0.85rem; white-space:nowrap;">Register Endpoint</button>
+        </div>
+
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Endpoint ID</th>
+                <th>Target URL</th>
+                <th>Signing Secret</th>
+                <th>Events</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="webhooksTableBody">
+              <tr>
+                <td colspan="5" style="color:var(--text-muted); text-align:center; padding:1.2rem;">Loading webhooks...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
       <!-- BOTTOM ROW: DEVELOPER DOCUMENTATION & QUICKSTART CARD -->
       <div class="card"
         style="margin-top: 1.5rem; border: 1px solid rgba(124, 92, 255, 0.3); background: linear-gradient(180deg, #101017 0%, #0a0a0f 100%);">
@@ -1489,6 +1528,72 @@
         setTimeout(() => {
           document.getElementById('authEmail')?.focus();
         }, 300);
+      }
+    }
+
+    
+    async function loadWebhooks() {
+      const tbody = document.getElementById('webhooksTableBody');
+      if (!tbody) return;
+      try {
+        const res = await req('/dashboard/webhooks');
+        if (!res.endpoints || res.endpoints.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="5" style="color:var(--text-muted); text-align:center; padding:1rem;">No webhooks registered yet. Register an endpoint above!</td></tr>';
+          return;
+        }
+        tbody.innerHTML = res.endpoints.map(wh => `
+          <tr>
+            <td><code>${wh.id}</code></td>
+            <td style="word-break:break-all;">${wh.url}</td>
+            <td><code style="color:#f59e0b;">${wh.secret}</code></td>
+            <td><span class="badge" style="font-size:0.7rem;">${(wh.events || ['all']).join(', ')}</span></td>
+            <td>
+              <button class="btn btn-danger" style="padding:0.25rem 0.6rem; font-size:0.72rem;" onclick="deleteDashboardWebhook('${wh.id}')">Delete</button>
+            </td>
+          </tr>
+        `).join('');
+      } catch (err) {
+        tbody.innerHTML = '<tr><td colspan="5" style="color:var(--danger); text-align:center;">Failed to load webhooks: ' + err.message + '</td></tr>';
+      }
+    }
+
+    async function registerDashboardWebhook() {
+      const urlInput = document.getElementById('webhookUrlInput');
+      const alert = document.getElementById('webhookAlert');
+      const url = urlInput.value.trim();
+      if (!url) {
+        alert.style.display = 'block';
+        alert.style.color = 'var(--danger)';
+        alert.innerText = 'Please enter a valid webhook URL';
+        return;
+      }
+      alert.style.display = 'none';
+
+      try {
+        const res = await req('/dashboard/webhooks', {
+          method: 'POST',
+          body: JSON.stringify({ url, events: ['job.completed', 'job.failed'] })
+        });
+        urlInput.value = '';
+        alert.style.display = 'block';
+        alert.style.color = '#34d399';
+        alert.innerText = 'Webhook endpoint registered successfully!';
+        setTimeout(() => alert.style.display = 'none', 3000);
+        await loadWebhooks();
+      } catch (err) {
+        alert.style.display = 'block';
+        alert.style.color = 'var(--danger)';
+        alert.innerText = err.message || 'Failed to register webhook';
+      }
+    }
+
+    async function deleteDashboardWebhook(id) {
+      if (!confirm('Are you sure you want to delete this webhook endpoint?')) return;
+      try {
+        await req('/dashboard/webhooks/' + id, { method: 'DELETE' });
+        await loadWebhooks();
+      } catch (err) {
+        alert('Failed to delete webhook: ' + err.message);
       }
     }
 

@@ -1,3 +1,4 @@
+const { createWebhookEndpoint, listWebhookEndpoints, deleteWebhookEndpoint } = require('../services/webhooks');
 const express = require('express');
 const { authenticate, requireRole } = require('../middleware/authenticate');
 const { createApiKey, listApiKeys, revokeApiKey, rotateApiKey } = require('../services/apiKeys');
@@ -136,6 +137,36 @@ dashboardRouter.patch('/team/:id/role', requireRole(['owner']), async (req, res,
 dashboardRouter.delete('/team/:id', requireRole(['owner']), async (req, res, next) => {
   try {
     await removeTeamMember(req.auth.accountId, req.params.id, req.auth.accountId);
+    res.status(204).send();
+  } catch (err) {
+    next(err);
+  }
+});
+
+
+// Webhooks Management via Dashboard
+dashboardRouter.get('/webhooks', async (req, res, next) => {
+  try {
+    const endpoints = await listWebhookEndpoints(req.auth.accountId);
+    res.json({ endpoints });
+  } catch (err) {
+    next(err);
+  }
+});
+
+dashboardRouter.post('/webhooks', requireRole(['owner', 'developer']), async (req, res, next) => {
+  try {
+    const { url, events } = req.body;
+    const endpoint = await createWebhookEndpoint(req.auth.accountId, url, events);
+    res.status(201).json({ message: 'Webhook endpoint created', endpoint });
+  } catch (err) {
+    next(err);
+  }
+});
+
+dashboardRouter.delete('/webhooks/:id', requireRole(['owner', 'developer']), async (req, res, next) => {
+  try {
+    await deleteWebhookEndpoint(req.auth.accountId, req.params.id);
     res.status(204).send();
   } catch (err) {
     next(err);
