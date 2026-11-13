@@ -204,6 +204,97 @@ class GoogleLyriaProvider {
 
 /**
  * ============================================================
+ * REPLICATE PROVIDER — meta/musicgen (Free $5 credits on signup)
+ * ============================================================
+ * Model: meta/musicgen (hosted on replicate.com)
+ * Free tier: $5 credits on signup at replicate.com/account
+ * Runs async: submit job → poll until complete → download audio
+ *
+ * Terms: MusicGen is CC-BY-NC 4.0 (non-commercial).
+ * For commercial licenses use a commercially cleared model.
+ */
+class ReplicateMusicProvider {
+  constructor() {
+    this.name = 'replicate/meta-musicgen';
+    this.apiToken = process.env.REPLICATE_API_TOKEN;
+    this.modelVersion = process.env.REPLICATE_MUSICGEN_VERSION ||
+      'b05b1dff1d8c6dc63d14b0cdb42135378dcb87f6373b0d3d341ede46e59e2b38';
+    this.timeoutMs = 120000;
+  }
+
+  async generate(req) {
+    if (!this.apiToken) {
+      throw new Error('REPLICATE_API_TOKEN not set. Get free credits at replicate.com/account');
+    }
+
+    const prompt = req.prompt || 'uplifting instrumental music';
+    const duration = Math.min(req.durationSec || 30, 30); // musicgen free max 30s
+    console.log(`[Replicate] Generating: prompt="${prompt.slice(0, 70)}", duration=${duration}s`);
+
+    // 1. Submit prediction
+    const submitBody = JSON.stringify({
+      version: this.modelVersion,
+      input: {
+        prompt: prompt + (req.instrumental ? ', instrumental, no vocals' : ''),
+        model_version: 'stereo-small',
+        output_format: 'mp3',
+        duration,
+        normalization_strategy: 'peak',
+      },
+    });
+
+    const submitRes = await this._httpsRequest('POST', '/v1/predictions', submitBody);
+    if (!submitRes.id) {
+      throw new Error(`Replicate submission failed: ${JSON.stringify(submitRes).slice(0, 200)}`);
+    }
+
+    console.log(`[Replicate] Job submitted: ${submitRes.id}, polling...`);
+
+    // 2. Poll until complete
+    const startTime = Date.now();
+    while (Date.now() - startTime < this.timeoutMs) {
+      await new Promise(r => setTimeout(r, 3000));
+      const status = await this._httpsRequest('GET', `/v1/predictions/${submitRes.id}`);
+
+      if (status.status === 'succeeded') {
+        const audioUrl = Array.isArray(status.output) ? status.output[0] : status.output;
+        if (!audioUrl) throw new Error('Replicate returned no audio URL');
+        console.log(`[Replicate] Done in ${((Date.now() - startTime) / 1000).toFixed(1)}s`);
+        const audioPath = await saveAudioFromUrl(audioUrl, config.storageDir, 'replicate');
+        return { audioPath, durationSec: req.durationSec, format: 'mp3', model: this.name };
+      }
+
+      if (status.status === 'failed' || status.status === 'canceled') {
+        throw new Error(`Replicate job ${status.status}: ${status.error || 'unknown'}`);
+      }
+    }
+    throw new Error('Replicate timed out after 120s');
+  }
+
+  _httpsRequest(method, path, body) {
+    return new Promise((resolve, reject) => {
+      const https = require('https');
+      const opts = {
+        hostname: 'api.replicate.com',
+        path,
+        method,
+        headers: { 'Authorization': `Bearer ${this.apiToken}`, 'Content-Type': 'application/json' },
+      };
+      if (body) opts.headers['Content-Length'] = Buffer.byteLength(body);
+      const req = https.request(opts, res => {
+        let d = '';
+        res.on('data', c => d += c);
+        res.on('end', () => { try { resolve(JSON.parse(d)); } catch { reject(new Error(d.slice(0, 100))); } });
+      });
+      req.on('error', reject);
+      if (body) req.write(body);
+      req.end();
+    });
+  }
+}
+
+/**
+ * ============================================================
  * FAL.AI / MiniMax Music Provider (Alternative real provider)
  * ============================================================
  */
@@ -262,56 +353,98 @@ class FalMiniMaxProvider {
 
 /**
  * ============================================================
- * HUGGING FACE MUSICGEN PROVIDER (Free Inference API)
+ * HUGGING FACE MUSICGEN PROVIDER (Direct REST Inference API)
  * ============================================================
- * Uses model: facebook/musicgen-small (free, no billing required)
- * Requires: HF_TOKEN env var (free READ token from huggingface.co/settings/tokens)
+ * Uses model: facebook/musicgen-small via HF inference REST API.
+ * Requires: HF_TOKEN with 'Make calls to the serverless Inference API' permission.
+ * Token scopes: Go to hf.co/settings/tokens → Edit token → enable Inference scope.
  *
  * Terms: MusicGen is CC-BY-NC 4.0 licensed — non-commercial use only.
  * For commercial use, switch to a commercially-licensed model.
+ *
+ * NOTE: If your HF token only has repo.content.read scope, generation
+ * will fall back to the mock provider automatically. Update the token
+ * scope at huggingface.co/settings/tokens to enable inference.
  */
 class HuggingFaceMusicProvider {
   constructor() {
-    this.name = 'huggingface/musicgen-small';
-    this.hfToken = process.env.HF_TOKEN;
     this.model = process.env.HF_MUSIC_MODEL || 'facebook/musicgen-small';
+    this.name = `huggingface/${this.model.split('/').pop()}`;
+    this.hfToken = process.env.HF_TOKEN;
+    this.timeoutMs = 120000; // musicgen-small can take up to 2 min on cold start
   }
 
   async generate(req) {
     if (!this.hfToken) {
-      throw new Error('HF_TOKEN environment variable is not set. Get a free token at huggingface.co/settings/tokens');
+      throw new Error('HF_TOKEN not set. Get a free token at huggingface.co/settings/tokens');
     }
 
-    const { InferenceClient } = require('@huggingface/inference');
-    const hf = new InferenceClient(this.hfToken);
-
     const prompt = this._buildPrompt(req);
-    console.log(`[HuggingFace] Generating music: model=${this.model}, prompt="${prompt.slice(0, 80)}..."`);
+    console.log(`[HuggingFace] Generating: model=${this.model}, prompt="${prompt.slice(0, 80)}..."`);
 
-    // textToAudio returns a Blob on success
-    const audioBlob = await hf.textToAudio({
-      model: this.model,
-      inputs: prompt,
-    });
+    // Use the HF router endpoint (new inference routing system)
+    const url = `https://router.huggingface.co/hf-inference/models/${this.model}`;
+    const body = JSON.stringify({ inputs: prompt });
 
-    // Convert Blob → Buffer → save to disk
-    const arrayBuffer = await audioBlob.arrayBuffer();
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), this.timeoutMs);
+
+    let response;
+    try {
+      response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${this.hfToken}`,
+          'Content-Type': 'application/json',
+          'Accept': 'audio/wav, audio/flac, audio/mpeg, application/octet-stream',
+        },
+        body,
+        signal: controller.signal,
+      });
+    } finally {
+      clearTimeout(timer);
+    }
+
+    if (!response.ok) {
+      const errText = await response.text().catch(() => '');
+      // Check for common token permission error — give a helpful message
+      if (response.status === 403 && errText.includes('permissions')) {
+        throw new Error(
+          'HF token lacks Inference permission. Go to hf.co/settings/tokens, edit your token, ' +
+          'and enable "Make calls to the serverless Inference API" under User Permissions.'
+        );
+      }
+      if (response.status === 503) {
+        throw new Error(`HF model ${this.model} is loading (cold start). Retry in 20s.`);
+      }
+      throw new Error(`HF API error ${response.status}: ${errText.slice(0, 200)}`);
+    }
+
+    const contentType = response.headers.get('content-type') || '';
+    if (!contentType.includes('audio') && !contentType.includes('octet-stream')) {
+      const text = await response.text();
+      throw new Error(`HF did not return audio (got ${contentType}): ${text.slice(0, 200)}`);
+    }
+
+    // Save the audio buffer to disk
+    const arrayBuffer = await response.arrayBuffer();
     const audioBuffer = Buffer.from(arrayBuffer);
 
     if (!fs.existsSync(config.storageDir)) {
       fs.mkdirSync(config.storageDir, { recursive: true });
     }
 
-    const filename = `hf_musicgen_${Date.now()}.wav`;
+    const ext = contentType.includes('flac') ? 'flac' : contentType.includes('mpeg') ? 'mp3' : 'wav';
+    const filename = `hf_${Date.now()}.${ext}`;
     const audioPath = path.join(config.storageDir, filename);
     fs.writeFileSync(audioPath, audioBuffer);
 
-    console.log(`[HuggingFace] Audio saved: ${audioPath} (${audioBuffer.length} bytes)`);
+    console.log(`[HuggingFace] Audio saved: ${audioPath} (${audioBuffer.length} bytes, ${ext})`);
 
     return {
       audioPath,
       durationSec: req.durationSec,
-      format: 'wav',
+      format: ext,
       model: this.name,
     };
   }
@@ -339,17 +472,21 @@ class PrimaryMusicProvider {
       this._impl = new FalMiniMaxProvider();
     } else if (provider === 'huggingface' || provider === 'hf') {
       this._impl = new HuggingFaceMusicProvider();
+    } else if (provider === 'replicate') {
+      this._impl = new ReplicateMusicProvider();
     } else {
-      // Default real provider is HuggingFace if HF_TOKEN present, else Lyria
-      this._impl = process.env.HF_TOKEN
-        ? new HuggingFaceMusicProvider()
-        : process.env.GEMINI_API_KEY
-          ? new GoogleLyriaProvider()
-          : null;
+      // Auto-detect: Replicate > HuggingFace > Lyria
+      this._impl = process.env.REPLICATE_API_TOKEN
+        ? new ReplicateMusicProvider()
+        : process.env.HF_TOKEN
+          ? new HuggingFaceMusicProvider()
+          : process.env.GEMINI_API_KEY
+            ? new GoogleLyriaProvider()
+            : null;
     }
 
     this.name = this._impl ? this._impl.name : 'mock/primary-fallback';
-    this.timeoutMs = 65000;
+    this.timeoutMs = 120000;
   }
 
   async generate(req) {
@@ -460,5 +597,6 @@ module.exports = {
   GoogleLyriaProvider,
   FalMiniMaxProvider,
   HuggingFaceMusicProvider,
+  ReplicateMusicProvider,
   getProvider,
 };
