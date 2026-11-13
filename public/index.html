@@ -1711,10 +1711,6 @@
           throw new Error(data.error?.message || 'Generation failed');
         }
 
-        alert.style.display = 'block';
-        alert.style.color = 'var(--success)';
-        alert.innerText = `Generation created (ID: ${data.id})! Status: ${data.status.toUpperCase()}`;
-
         showToast('Generation Dispatched', `Job ${data.id} accepted (202). Polling status...`, '🎵');
 
         await loadGenerations();
