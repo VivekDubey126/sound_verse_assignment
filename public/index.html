@@ -1328,6 +1328,7 @@
         // Role-Based UI Permissions
         const isOwner = role === 'owner';
         const isViewer = role === 'viewer';
+        currentAccount.role = role;
 
         // Plan updates: Owner only
         const planSelector = document.getElementById('planSelector');
@@ -1451,7 +1452,17 @@
           return;
         }
 
-        tbody.innerHTML = res.data.map(m => `
+        const isCurrentAccountOwner = currentAccount && currentAccount.role === 'owner';
+
+        tbody.innerHTML = res.data.map(m => {
+          let actionCell = '<span style="color:var(--text-muted); font-size:0.75rem;">—</span>';
+          if (m.role === 'owner') {
+            actionCell = '<span style="color:var(--text-muted); font-size:0.75rem;">Owner</span>';
+          } else if (isCurrentAccountOwner) {
+            actionCell = `<button class="btn btn-danger" style="padding:0.15rem 0.45rem; font-size:0.7rem;" onclick="removeMember('${m.id}')">Remove</button>`;
+          }
+
+          return `
           <tr>
             <td style="font-size:0.85rem;">${m.email}</td>
             <td>
@@ -1460,12 +1471,11 @@
               </span>
             </td>
             <td>
-              ${m.role !== 'owner' ? `
-                <button class="btn btn-danger" style="padding:0.15rem 0.4rem; font-size:0.7rem;" onclick="removeMember('${m.id}')">Remove</button>
-              ` : '<span style="color:var(--text-muted); font-size:0.75rem;">Owner</span>'}
+              ${actionCell}
             </td>
           </tr>
-        `).join('');
+        `;
+        }).join('');
       } catch (e) { }
     }
 
