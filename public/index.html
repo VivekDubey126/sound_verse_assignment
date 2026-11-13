@@ -1459,7 +1459,15 @@
           if (m.role === 'owner') {
             actionCell = '<span style="color:var(--text-muted); font-size:0.75rem;">Owner</span>';
           } else if (isCurrentAccountOwner) {
-            actionCell = `<button class="btn btn-danger" style="padding:0.15rem 0.45rem; font-size:0.7rem;" onclick="removeMember('${m.id}')">Remove</button>`;
+            actionCell = `
+              <div style="display:flex; align-items:center; gap:0.4rem;">
+                <select onchange="updateRole('${m.id}', this.value)" style="width:auto; padding:0.15rem 0.4rem; font-size:0.7rem; margin:0; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.15); border-radius:6px; color:#fff;">
+                  <option value="developer" ${m.role === 'developer' ? 'selected' : ''}>Developer</option>
+                  <option value="viewer" ${m.role === 'viewer' ? 'selected' : ''}>Viewer</option>
+                </select>
+                <button class="btn btn-danger" style="padding:0.15rem 0.45rem; font-size:0.7rem;" onclick="removeMember('${m.id}')">Remove</button>
+              </div>
+            `;
           }
 
           return `
@@ -1503,6 +1511,21 @@
         showToast('Member Added', `Invited ${email} as ${role.toUpperCase()}`, '👥');
       } catch (e) {
         alert(e.message);
+      }
+    }
+
+    async function updateRole(memberId, newRole) {
+      try {
+        await req(`/dashboard/team/${memberId}/role`, {
+          method: 'PATCH',
+          body: JSON.stringify({ role: newRole })
+        });
+        await loadTeam();
+        await loadAudit();
+        showToast('Role Updated', `Member role changed to ${newRole.toUpperCase()}`, '🔄');
+      } catch (e) {
+        alert(e.message);
+        await loadTeam();
       }
     }
 

@@ -102,7 +102,7 @@ dashboardRouter.get('/audit', async (req, res, next) => {
 });
 
 // Team Members (Roles: owner, developer, viewer)
-const { listTeamMembers, addTeamMember, removeTeamMember } = require('../services/teams');
+const { listTeamMembers, addTeamMember, updateTeamMemberRole, removeTeamMember } = require('../services/teams');
 
 dashboardRouter.get('/team', async (req, res, next) => {
   try {
@@ -118,6 +118,16 @@ dashboardRouter.post('/team', requireRole(['owner']), async (req, res, next) => 
     const { email, role } = req.body;
     const member = await addTeamMember(req.auth.accountId, email, role, req.auth.accountId);
     res.status(201).json({ message: 'Team member added', member });
+  } catch (err) {
+    next(err);
+  }
+});
+
+dashboardRouter.patch('/team/:id/role', requireRole(['owner']), async (req, res, next) => {
+  try {
+    const { role } = req.body;
+    const updated = await updateTeamMemberRole(req.auth.accountId, req.params.id, role, req.auth.accountId);
+    res.json({ message: 'Team member role updated', member: updated });
   } catch (err) {
     next(err);
   }

@@ -121,5 +121,45 @@ async function removeTeamMember(accountId, memberId, actorId) {
   });
 }
 
-module.exports = { listTeamMembers, addTeamMember, removeTeamMember, ALLOWED_ROLES };
+async function updateTeamMemberRole(accountId, memberId, newRole, actorId) {
+  const db = getDb();
+  const normalizedRole = (newRole || '').toLowerCase().trim();
+  if (!ALLOWED_ROLES.includes(normalizedRole)) {
+    throw new BadRequestError('invalid_role', `Role must be one of: ${ALLOWED_ROLES.join(', ')}`);
+  }
+
+  const member = db.prepare('SELECT * FROM memberships WHERE id = ? AND account_id = ?').get(memberId, accountId);
+  if (!member) throw new NotFoundError('Team member');
+
+  // Safety rule: Cannot demote the last active OWNER
+  if (member.role === 'owner' && normalizedRole !== 'owner') {
+    const ownerCount = db.prepare(`
+      SELECT count(*) as c FROM memberships WHERE account_id = ? AND role = 'owner' AND status = 'active'
+    `).get(accountId).c;
+
+    if (ownerCount <= 1) {
+      throw new BadRequestError('cannot_demote_last_owner', 'Cannot demote the last active account owner');
+    }
+  }
+
+  const now = new Date().toISOString();
+  db.prepare('UPDATE memberships SET role = ?, updated_at = ? WHERE id = ?').run(normalizedRole, now, memberId);
+  try {
+    db.prepare('UPDATE team_members SET role = ? WHERE id = ?').run(normalizedRole, memberId);
+  } catch (_) { }
+
+  await logAudit({
+    accountId,
+    actorType: 'user',
+    actorId: actorId || accountId,
+    action: 'team_member.role_updated',
+    resourceType: 'team_member',
+    resourceId: memberId,
+    details: { email: member.email, old_role: member.role, new_role: normalizedRole },
+  });
+
+  return db.prepare('SELECT * FROM memberships WHERE id = ?').get(memberId);
+}
+
+module.exports = { listTeamMembers, addTeamMember, updateTeamMemberRole, removeTeamMember, ALLOWED_ROLES };
 
